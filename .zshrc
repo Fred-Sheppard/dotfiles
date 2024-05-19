@@ -87,8 +87,6 @@ tldr-less() {
 }
 alias tl="tldr-less"
 
-
-
 dkrstart() {
     sudo docker ps -a | fzf | awk '{print $1}' | xargs sudo docker start
 }
@@ -181,5 +179,3 @@ eval "$(zoxide init --cmd cd zsh)"
 eval "$(starship init zsh)"
 eval $(thefuck --alias)
 [ -f "/home/fred/.ghcup/env" ] && . "/home/fred/.ghcup/env" # ghcup-env
-
-
