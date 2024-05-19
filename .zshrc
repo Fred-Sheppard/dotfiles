@@ -47,8 +47,7 @@ export EDITOR=$VISUAL
 export ZVM_VI_EDITOR=$VISUAL
 export NO_AT_BRIDGE=1
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
-export NNN_PLUGIN_PATH='/home/fred/bin/nnn'
-export NNN_PLUG='d:!trash put "$nnn"*;l:dotfile.sh "$nnn"'
+export NNN_PLUG='d:!trash put "$nnn"*;l:!~/scripts/nnn_dotfile.sh "$nnn"*'
 
 # ALIAS
 alias ls="eza --icons --group-directories-first"
@@ -79,11 +78,12 @@ alias catcode="tail -n +1"
 
 # FUNCTIONS
 tldr-less() {
-  if [[ -n "$1" ]]; then
-    tldr "$1" --color=always | less -R
-  else
+  if [ $# -eq 0 ]; then
     echo "Usage: tldr-less <command>"
+    return 1
   fi
+
+  tldr "$1" --color=always | less -R
 }
 alias tl="tldr-less"
 
@@ -98,21 +98,50 @@ dkrstop() {
 }
 
 copycode() {
-  if [[ -n "$1" ]]; then
-      (tree; tail -n +1 $@) | copy
-  else
+  if [ $# -eq 0 ]; then
     echo "Usage: copycode <file>"
+    return 1
   fi
+
+  (tree; tail -n +1 $@) | copy
 }
 
 runbg() {
     "$@" > /dev/null 2>& 1 & disown
 }
 
-
-
 nemo() {
     runbg /usr/bin/nemo
+}
+
+dotfile() {
+  if [ $# -eq 0 ]; then
+    echo "Usage: dotfile <file>"
+    return 1
+  fi
+
+  # Ensure the .dotfiles directory exists
+  mkdir -p ~/.dotfiles
+
+  for file in "$@"; do
+    if [ ! -e "$file" ]; then
+      echo "File $file does not exist."
+      continue
+    fi
+
+    # Get the absolute path of the file
+    local abs_path=$(realpath "$file")
+    local filename=$(basename "$file")
+
+    # Move the file to the .dotfiles directory
+    mv "$abs_path" ~/.dotfiles/
+
+    # Create a symlink at the old location pointing to the new location
+    ln -s ~/.dotfiles/"$filename" "$abs_path"
+
+    # Echo the new file location
+    echo "Moved to ~/.dotfiles/$filename"
+  done
 }
 
 n ()
@@ -145,9 +174,6 @@ n ()
         rm -f -- "$NNN_TMPFILE" > /dev/null
     }
 }
-
-
-
 
 ################################
 
