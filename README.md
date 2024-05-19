@@ -1,3 +1,3 @@
 # dotfiles
 
-A collection of my machine's dotfiles.
+A collection of my machine's configuration files.
