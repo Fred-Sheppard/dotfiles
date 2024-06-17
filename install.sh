@@ -6,15 +6,25 @@ sudo apt-get upgrade -y
 sudo apt install -y $(cat apt-requirements.txt)
 
 # neovim
-curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
-sudo rm -rf /opt/nvim
-sudo tar -C /opt -xzf nvim-linux64.tar.gz
+if [ ! -x nvim ]; then
+    curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
+    sudo rm -rf /opt/nvim
+    sudo tar -C /opt -xzf nvim-linux64.tar.gz
+    # Path is handled in zshrc
+fi
 
 # Install cargo binstall
 curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
 # Install other rust apps using cargo binstall
-cargo-binstall --no-confirm $(cat cargo-requirements.txt)
+cp cargo-env $HOME/.cargo/env
+source $HOME/.cargo/env
+echo '. "$HOME/.cargo/env"' >> $HOME/.zshenv
 
+if [ ! -x cargo-binstall ]; then
+  echo "Error: cargo-binstall not found. Likely a issue with \$PATH"
+  exit 1
+fi
+cargo-binstall --no-confirm eza && cargo-binstall --no-confirm $(cat cargo-requirements.txt)
 
 # clone and link to dotfiles
 ln -fs $HOME/dotfiles/.zshrc $HOME/.zshrc
@@ -25,9 +35,11 @@ ln -fs $HOME/dotfiles/status.kdl $HOME/.config/zellij/layouts/default.kdl
 ln -fs $HOME/dotfiles/starship.toml $HOME/.config/starship.toml
 
 # Bat theme
-mkdir -p "$(bat --config-dir)/themes"
-wget -P "$(bat --config-dir)/themes" https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Mocha.tmTheme
-bat cache --build
+if [ -x bat ]; then
+    mkdir -p "$(bat --config-dir)/themes"
+    wget -P "$(bat --config-dir)/themes" https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Mocha.tmTheme
+    bat cache --build
+fi
 
 # Oh My Zsh!
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
