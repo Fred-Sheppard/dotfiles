@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 # apt commands
-sudo add-apt-repository -y ppa:neovim-ppa/stable
 sudo apt-get update
 sudo apt-get upgrade -y
 sudo apt install -y $(cat apt-requirements.txt)
@@ -11,14 +10,10 @@ curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.
 sudo rm -rf /opt/nvim
 sudo tar -C /opt -xzf nvim-linux64.tar.gz
 
-# rustup
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-source $HOME/.cargo/env
-
 # Install cargo binstall
 curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
 # Install other rust apps using cargo binstall
-cargo binstall --no-confirm $(cat cargo-requirements.txt)
+cargo-binstall --no-confirm $(cat cargo-requirements.txt)
 
 # Bat theme
 mkdir -p "$(bat --config-dir)/themes"
