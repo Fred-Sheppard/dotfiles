@@ -1,0 +1,8 @@
+eza
+fd-find
+zellij
+bat
+ripgrep
+trashy
+zoxide
+du-dust
