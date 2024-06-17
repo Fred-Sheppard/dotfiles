@@ -6,3 +6,4 @@ ripgrep
 trashy
 zoxide
 du-dust
+starship
