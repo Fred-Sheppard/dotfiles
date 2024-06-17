@@ -57,8 +57,10 @@ vim.keymap.set('n', '<Leader>x', ':x<CR>', opt) -- Write and exit
 vim.keymap.set('n', '<Leader>q', ':q<CR>', opt) -- Write and exit
 vim.keymap.set('n', '<Leader>a', 'ggVG', opt) -- Select all
 vim.keymap.set('n', 'gl', '<cmd>lua vim.diagnostic.open_float()<cr>', opt) -- Error messages
-vim.keymap.set('n', 'H', '^', opt)
-vim.keymap.set('n', 'L', '$', opt)
+vim.keymap.set('n', 'H', '^', opt) -- First character
+vim.keymap.set('n', 'L', '$', opt) -- Last character
+vim.keymap.set('n', 'nv', ':e ~/.config/nvim/init.lua<CR>', opt)
+vim.keymap.set('n', 'nw', ':set wrap!<CR>', opt)
 -- Doesn't work in WinTerm
 vim.keymap.set('n', '<C-_>', 'gcc', opt) -- <C-/> to comment
 vim.keymap.set('v', 'C-_>', 'gc', opt) -- <C-/> to comment
