@@ -1,0 +1,3 @@
+git
+nnn
+ipython3
