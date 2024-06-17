@@ -1,3 +1,2 @@
 nnn
 zsh
-neovim
