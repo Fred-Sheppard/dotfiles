@@ -13,6 +13,7 @@ git clone https://github.com/jeffreytse/zsh-vi-mode $ZSH_CUSTOM/plugins/zsh-vi-m
 
 # rustup
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+export PATH=$PATH:$HOME/cargo/bin
 
 # Install cargo binstall
 curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
@@ -26,8 +27,8 @@ bat cache --build
 
 # clone and link to dotfiles
 ln -s $HOME/dotfiles/.zshrc $HOME/.zshrc
-mkdir -p $XDG_CONFIG_HOME/nvim
-ln -s $HOME/dotfiles/init.lua $XDG_CONFIG_HOME/nvim/init.lua
-mkdir -p $XDG_CONFIG_HOME/zellij/layouts
-ln -s $HOME/dotfiles/status.kdl $XDG_CONFIG_HOME/zellij/layouts/default.kdl
-ln -s $HOME/dotfiles/starship.toml $XDG_CONFIG_HOME/starship.toml
+mkdir -p $HOME/.config/nvim
+ln -s $HOME/dotfiles/init.lua $HOME/.config/nvim/init.lua
+mkdir -p $HOME/.config/zellij/layouts
+ln -s $HOME/dotfiles/status.kdl $HOME/.config/zellij/layouts/default.kdl
+ln -s $HOME/dotfiles/starship.toml $HOME/.config/starship.toml
