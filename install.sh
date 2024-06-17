@@ -21,12 +21,12 @@ source $HOME/.cargo/env
 echo '. "$HOME/.cargo/env"' >> $HOME/.zshenv
 
 if [ ! -x cargo-binstall ]; then
-  echo "Error: cargo-binstall not found. Likely a issue with \$PATH"
+  echo "Error: cargo-binstall not found. Likely an issue with \$PATH"
   exit 1
 fi
-cargo-binstall --no-confirm eza && cargo-binstall --no-confirm $(cat cargo-requirements.txt)
+cargo-binstall --no-confirm $(cat cargo-requirements.txt)
 
-# clone and link to dotfiles
+# Link to dotfiles
 ln -fs $HOME/dotfiles/.zshrc $HOME/.zshrc
 mkdir -p $HOME/.config/nvim
 ln -fs $HOME/dotfiles/init.lua $HOME/.config/nvim/init.lua
@@ -39,10 +39,16 @@ if [ -x bat ]; then
     mkdir -p "$(bat --config-dir)/themes"
     wget -P "$(bat --config-dir)/themes" https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Mocha.tmTheme
     bat cache --build
+else
+    echo "Bat not installed, skipping themes"
 fi
 
 # Oh My Zsh!
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 # zsh-vi-mode
 git clone https://github.com/jeffreytse/zsh-vi-mode $HOME/.oh-my-zsh/custom/plugins/zsh-vi-mode
-mv ~/.zshrc.pre-oh-my-zsh ~/.zshrc
+
+# If rust commands were not successful, then we shouldn't override cat, ls etc.
+if [ -x bat ]; then
+    mv ~/.zshrc.pre-oh-my-zsh ~/.zshrc
+fi
