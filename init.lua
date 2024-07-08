@@ -25,6 +25,8 @@ vim.opt.smarttab = true
 vim.opt.expandtab = true
 vim.opt.tabstop = 8
 vim.opt.softtabstop = 0
+-- Quick scope
+vim.g.qs_highlight_on_keys = { "f", "F", "t", "T" }
 
 
 -- LEADER
@@ -36,6 +38,7 @@ require('lazy').setup({
     { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
     {"nvim-treesitter/nvim-treesitter", build = ":TSUpdate"},
     'gelguy/wilder.nvim',
+    'unblevable/quick-scope',
 })
 
 vim.cmd.colorscheme "catppuccin-mocha"
