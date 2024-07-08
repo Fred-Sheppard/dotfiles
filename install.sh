@@ -31,6 +31,7 @@ ln -fs $HOME/dotfiles/.zshrc $HOME/.zshrc
 mkdir -p $HOME/.config/nvim
 ln -fs $HOME/dotfiles/init.lua $HOME/.config/nvim/init.lua
 mkdir -p $HOME/.config/zellij/layouts
+mkdir -p $HOME/.local/share/zellij/
 ln -fs $HOME/dotfiles/status.kdl $HOME/.config/zellij/layouts/default.kdl
 ln -fs $HOME/dotfiles/starship.toml $HOME/.config/starship.toml
 
