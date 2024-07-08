@@ -16,6 +16,8 @@ vim.opt.rtp:prepend(lazypath)
 vim.opt.clipboard = 'unnamed'
 vim.opt.hlsearch = false
 vim.opt.relativenumber = true
+-- Disables right click, allowing for copying without xclip or similar
+vim.opt.mouse=""
 
 -- Indentation settings
 vim.opt.shiftwidth = 4
