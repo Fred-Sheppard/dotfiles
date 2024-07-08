@@ -38,6 +38,8 @@ export BAT_THEME="Catppuccin Mocha"
 alias vim=nvim
 alias zrc='nvim ~/.zshrc'
 alias cat="bat"
+alias ls="eza"
+alias tl="tldr"
 # Coloured help pages
 alias -g -- -h='-h 2>&1 | bat --language=help --style=plain --paging=always'
 alias -g -- --help='--help 2>&1 | bat --language=help --style=plain --paging=always'
