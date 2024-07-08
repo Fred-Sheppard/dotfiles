@@ -67,6 +67,10 @@ vim.keymap.set('n', 'H', '^', opt) -- First character
 vim.keymap.set('n', 'L', '$', opt) -- Last character
 vim.keymap.set('n', 'nv', ':e ~/.config/nvim/init.lua<CR>', opt)
 vim.keymap.set('n', 'nw', ':set wrap!<CR>', opt)
+-- Swap p and P
+-- P pastes without overriding the register - allows multiple pastes of the same thing
+vim.keymap.set('v', 'p', 'P', opt)
+vim.keymap.set('v', 'P', 'p', opt)
 -- Doesn't work in WinTerm
 vim.keymap.set('n', '<C-_>', 'gcc', opt) -- <C-/> to comment
 vim.keymap.set('v', 'C-_>', 'gc', opt) -- <C-/> to comment
