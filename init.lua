@@ -44,7 +44,8 @@ require('lazy').setup({
 vim.cmd.colorscheme "catppuccin-mocha"
 
 require('nvim-treesitter.configs').setup({
-    highlight = { enable = true }
+    highlight = { enable = true },
+    ensure_installed = { "vimdoc", "vim"}
 })
 
 local wilder = require('wilder')
