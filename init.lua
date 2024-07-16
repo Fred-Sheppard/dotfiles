@@ -45,7 +45,7 @@ vim.cmd.colorscheme "catppuccin-mocha"
 
 require('nvim-treesitter.configs').setup({
     highlight = { enable = true },
-    ensure_installed = { "vimdoc", "vim"}
+    ensure_installed = { "vimdoc", "vim", "lua"}
 })
 
 local wilder = require('wilder')
