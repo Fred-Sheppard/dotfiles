@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 
+# Exit on any error
+set -e
+
 # apt commands
 sudo apt-get update
 sudo apt-get upgrade -y
 sudo apt install -y $(cat apt-requirements.txt)
 
 # neovim
-if [ ! -x nvim ]; then
+if ! command -v nvim >/dev/null 2>&1; then
     curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
     sudo rm -rf /opt/nvim
     sudo tar -C /opt -xzf nvim-linux64.tar.gz
@@ -20,7 +23,7 @@ cp cargo-env $HOME/.cargo/env
 source $HOME/.cargo/env
 echo '. "$HOME/.cargo/env"' >> $HOME/.zshenv
 
-if [ ! -x cargo-binstall ]; then
+if ! command -v cargo-binstall >/dev/null 2>&1; then
   echo "Error: cargo-binstall not found. Likely an issue with \$PATH"
   exit 1
 fi
@@ -36,10 +39,12 @@ ln -fs $HOME/dotfiles/status.kdl $HOME/.config/zellij/layouts/default.kdl
 ln -fs $HOME/dotfiles/starship.toml $HOME/.config/starship.toml
 
 # Bat theme
-if [ -x bat ]; then
-    mkdir -p "$(bat --config-dir)/themes"
-    wget -P "$(bat --config-dir)/themes" https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Mocha.tmTheme
+if ! command -v bat >/dev/null 2>&1; then
+    bat_config=$(bat --config-dir)
+    mkdir -p "$bat_config/themes"
+    wget -P "$bat_config/themes" https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Mocha.tmTheme
     bat cache --build
+    echo '--theme="Catppuccin Mocha"' >> "$bat_config/config"
 else
     echo "Bat not installed, skipping themes"
 fi
@@ -50,6 +55,6 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/too
 git clone https://github.com/jeffreytse/zsh-vi-mode $HOME/.oh-my-zsh/custom/plugins/zsh-vi-mode
 
 # If rust commands were not successful, then we shouldn't override cat, ls etc.
-if [ -x bat ]; then
+if ! command -v bat >/dev/null 2>&1; then
     mv ~/.zshrc.pre-oh-my-zsh ~/.zshrc
 fi
