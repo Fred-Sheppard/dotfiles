@@ -17,7 +17,7 @@ fi
 curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
 # Install other rust apps using cargo binstall
 cp cargo-env $HOME/.cargo/env
-source $HOME/.cargo/env
+eval "$(cat $HOME/.cargo/env)"
 echo '. "$HOME/.cargo/env"' >> $HOME/.zshenv
 
 if [ ! -x cargo-binstall ]; then
