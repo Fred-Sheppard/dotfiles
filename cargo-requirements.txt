@@ -7,3 +7,4 @@ trashy
 zoxide
 du-dust
 starship
+tealdeer
