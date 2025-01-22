@@ -1,10 +1,12 @@
+bat
+du-dust
 eza
 fd-find
-zellij
-bat
 ripgrep
-trashy
-zoxide
-du-dust
 starship
+trashy
 tealdeer
+yazi-cli
+yazi-fm
+zellij
+zoxide
