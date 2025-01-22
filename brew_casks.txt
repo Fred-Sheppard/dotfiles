@@ -1,0 +1,11 @@
+alacritty
+bitwarden
+bluesnooze
+firefox
+hiddenbar
+obsidian
+raycast
+rectangle
+shottr
+spotify
+stats
