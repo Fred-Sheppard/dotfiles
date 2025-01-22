@@ -1,0 +1,18 @@
+general.import = [
+  "~/.config/alacritty/catppuccin-mocha.toml"
+]
+
+[font]
+normal = { family = "JetBrainsMono Nerd Font", style = "Regular" }
+size = 14
+
+[window]
+option_as_alt = "OnlyLeft"
+decorations = "None"
+startup_mode = "Maximized"
+
+[selection]
+save_to_clipboard = true
+
+[mouse]
+hide_when_typing = true
