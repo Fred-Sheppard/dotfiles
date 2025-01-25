@@ -42,11 +42,10 @@ export ZELLIJ_AUTO_ATTACH="true"
 alias zrc='nvim ~/.zshrc'
 alias cat="bat"
 alias ls="eza"
-alias tl="tldr"
+alias y="yazi"
 # Coloured help pages
 alias -g -- -h='-h 2>&1 | bat --language=help --style=plain --paging=always'
 alias -g -- --help='--help 2>&1 | bat --language=help --style=plain --paging=always'
-alias y="yazi"
 
 tldr-less() {
   if [ $# -eq 0 ]; then
