@@ -3,6 +3,7 @@ bitwarden
 bluesnooze
 firefox
 hiddenbar
+font-jetbrains-mono-nerd-font
 obsidian
 raycast
 rectangle
