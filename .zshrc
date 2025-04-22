@@ -7,7 +7,6 @@ plugins=(git zsh-vi-mode rust)
 
 source $ZSH/oh-my-zsh.sh
 
-path+=("/opt/nvim-linux64/bin")
 path=(~/bin/ $path)
 
 fpath=(~/.completions $fpath)
@@ -41,6 +40,9 @@ export BAT_THEME="Catppuccin Mocha"
 export ZELLIJ_AUTO_ATTACH="true"
 
 # ALIASES
+# Coloured help pages
+alias -g -- -h='-h 2>&1 | bat --language=help --style=plain --paging=always'
+alias -g -- --help='--help 2>&1 | bat --language=help --style=plain --paging=always'
 alias zrc='nvim ~/.zshrc'
 alias cat="bat"
 alias ls="eza"
@@ -94,6 +96,11 @@ eval "$(zoxide init zsh --cmd cd)"
 eval "$(zellij setup --generate-auto-start zsh)"
 eval "$(starship init zsh)"
 eval "$(fzf --zsh)"
+eval "$(ngrok completion)"
+
+ export NVM_DIR="$HOME/.nvm"
+  [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+  [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
 function zr () { zellij run --name "$*" -- zsh -ic "$*";}
 function zrf () { zellij run --name "$*" --floating -- zsh -ic "$*";}
