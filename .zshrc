@@ -24,6 +24,8 @@ bindkey -a 'k' up-line-or-beginning-search
 bindkey -a 'j' down-line-or-beginning-search
 ")
 bindkey -M viins '\e.' insert-last-word
+bindkey -M vicmd H beginning-of-line
+bindkey -M vicmd L end-of-line
 
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
