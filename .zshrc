@@ -48,6 +48,8 @@ alias y="yazi"
 # Coloured help pages
 alias -g -- -h='-h 2>&1 | bat --language=help --style=plain --paging=always'
 alias -g -- --help='--help 2>&1 | bat --language=help --style=plain --paging=always'
+alias mkvenv="python3 -m venv .venv"
+alias vv="source .venv/bin/activate"
 
 tldr-less() {
   if [ $# -eq 0 ]; then
