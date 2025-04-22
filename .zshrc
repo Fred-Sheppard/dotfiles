@@ -3,7 +3,7 @@ export ZSH="$HOME/.oh-my-zsh"
 
 ZSH_THEME="robbyrussell"
 
-plugins=(git zsh-vi-mode)
+plugins=(git zsh-vi-mode rust)
 
 source $ZSH/oh-my-zsh.sh
 
