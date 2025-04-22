@@ -1,4 +1,5 @@
 bat
+cargo-update
 du-dust
 eza
 fd-find
@@ -6,7 +7,6 @@ ripgrep
 starship
 trashy
 tealdeer
-yazi-cli
 yazi-fm
 zellij
 zoxide
