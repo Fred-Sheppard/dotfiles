@@ -70,6 +70,25 @@ function y() {
 	rm -f -- "$tmp"
 }
 
+function dcup() {
+  if [ $# -eq 0 ]; then
+    echo "Usage: dcup <file>"
+    return 1
+  fi
+
+  docker-compose -f $1 up -d
+}
+
+function dcdown() {
+  if [ $# -eq 0 ]; then
+    echo "Usage: dcdown <file>"
+    return 1
+  fi
+
+  docker-compose -f $1 down
+}
+
+
 # EVALS
 eval "$(zoxide init zsh --cmd cd)"
 eval "$(zellij setup --generate-auto-start zsh)"
