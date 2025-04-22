@@ -50,6 +50,7 @@ alias mkvenv="python3 -m venv .venv"
 alias vv="source .venv/bin/activate"
 alias zz="exec zsh"
 
+# FUNCTIONS
 tldr-less() {
   if [ $# -eq 0 ]; then
     echo "Usage: tldr-less <command>"
@@ -59,8 +60,6 @@ tldr-less() {
   tldr "$1" --color=always | bat --paging=always --style=plain
 }
 alias tl="tldr-less"
-
-# FUNCTIONS
 
 # yazi
 function y() {
