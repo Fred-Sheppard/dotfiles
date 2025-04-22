@@ -1,6 +1,7 @@
 " Line buffer around cursor
 set scrolloff=3
 set clipboard=unnamedplus
+set ideajoin
 
 " Commentary plugin
 Plug 'tpope/vim-commentary'
@@ -13,6 +14,10 @@ nmap <leader>cd <Action>(ShowErrorDescription)
 nmap ]e <Action>(GotoNextError)
 nmap [e <Action>(GotoPreviousError)
 nmap <leader>ss <Action>(FileStructurePopup)
+nmap <leader>bb <Action>(BuildArtifact)
+nmap <leader>r <Action>(Run)
+" yank path
+nmap <leader>yp <Action>(CopyReference)
 nnoremap H ^
 nnoremap L $
 vnoremap H ^
