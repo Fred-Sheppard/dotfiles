@@ -1,0 +1,6 @@
+# settings/login items
+bluesnooze
+karabiner-elements
+raycast
+rectangle
+shottr
