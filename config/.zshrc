@@ -38,6 +38,7 @@ export VISUAL=$EDITOR
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 export BAT_THEME="Catppuccin Mocha"
 export ZELLIJ_AUTO_ATTACH="true"
+export HOMEBREW_NO_ENV_HINTS="true"
 
 # ALIASES
 # Coloured help pages
@@ -107,13 +108,18 @@ function zri () { zellij run --name "$*" --in-place -- zsh -ic "$*";}
 function ze () { zellij edit "$*";}
 function zef () { zellij edit --floating "$*";}
 function zei () { zellij edit --in-place "$*";}
-function zpipe () { 
+function zpipe () {
   if [ -z "$1" ]; then
     zellij pipe;
-  else 
+  else
     zellij pipe -p $1;
   fi
 }
 
 # Added by Windsurf
 export PATH="/Users/fred/.codeium/windsurf/bin:$PATH"
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(/Users/fred/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions
