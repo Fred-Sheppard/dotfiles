@@ -46,3 +46,14 @@ set("v", "p", "P", opt)
 set("v", "P", "p", opt)
 
 set("n", "<leader>w", ":w<CR>", opt)
+
+-- Disable Leader Q as session management
+-- While not required (if you hit the keys fast enough,
+-- it quits even with these enabled),
+-- this does makes quitting snappier.
+vim.keymap.del("n", "<leader>qq")
+vim.keymap.del("n", "<leader>ql")
+vim.keymap.del("n", "<leader>qd")
+vim.keymap.del("n", "<leader>qs")
+vim.keymap.del("n", "<leader>qS")
+set("n", "<leader>q", ":qa<CR>", opt)
