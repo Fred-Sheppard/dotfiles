@@ -3,3 +3,4 @@
 -- Add any additional options here
 
 vim.o.guifont = "JetBrainsMono Nerd Font:h16"
+vim.opt.shiftwidth = 2
