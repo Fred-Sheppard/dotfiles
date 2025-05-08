@@ -22,3 +22,6 @@ nnoremap H ^
 nnoremap L $
 vnoremap H ^
 vnoremap L $
+" Pasting doesn't override clipboard
+vnoremap p P
+vnoremap P p
