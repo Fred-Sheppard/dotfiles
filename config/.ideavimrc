@@ -25,3 +25,6 @@ vnoremap L $
 " Pasting doesn't override clipboard
 vnoremap p P
 vnoremap P p
+nmap <Space><Space> <Action>(GotoFile)
+nnoremap <leader>fc :e ~/.ideavimrc<CR>
+nmap <leader>sg <Action>(SearchEverywhere)
