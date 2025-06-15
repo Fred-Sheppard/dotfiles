@@ -10,10 +10,10 @@ sudo apt install -y $(cat apt-requirements.txt)
 
 # neovim
 if ! command -v nvim >/dev/null 2>&1; then
-    curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
-    sudo rm -rf /opt/nvim
-    sudo tar -C /opt -xzf nvim-linux64.tar.gz
-    # Path is handled in zshrc
+  curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
+  sudo rm -rf /opt/nvim
+  sudo tar -C /opt -xzf nvim-linux64.tar.gz
+  # Path is handled in zshrc
 fi
 
 # Install cargo binstall
@@ -21,7 +21,7 @@ curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-
 # Install other rust apps using cargo binstall
 cp cargo-env $HOME/.cargo/env
 export PATH="$HOME/.cargo/bin:$PATH"
-echo '. "$HOME/.cargo/env"' >> $HOME/.zshenv
+echo '. "$HOME/.cargo/env"' >>$HOME/.zshenv
 
 if ! command -v cargo-binstall >/dev/null 2>&1; then
   echo "Error: cargo-binstall not found. Likely an issue with \$PATH"
@@ -40,13 +40,13 @@ ln -fs $HOME/dotfiles/starship.toml $HOME/.config/starship.toml
 
 # Bat theme
 if ! command -v bat >/dev/null 2>&1; then
-    bat_config=$(bat --config-dir)
-    mkdir -p "$bat_config/themes"
-    wget -P "$bat_config/themes" https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Mocha.tmTheme
-    bat cache --build
-    echo '--theme="Catppuccin Mocha"' >> "$bat_config/config"
+  bat_config=$(bat --config-dir)
+  mkdir -p "$bat_config/themes"
+  wget -P "$bat_config/themes" https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Mocha.tmTheme
+  bat cache --build
+  echo '--theme="Catppuccin Mocha"' >>"$bat_config/config"
 else
-    echo "Bat not installed, skipping themes"
+  echo "Bat not installed, skipping themes"
 fi
 
 # Oh My Zsh!
@@ -60,5 +60,5 @@ git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:
 
 # If rust commands were not successful, then we shouldn't override cat, ls etc.
 if ! command -v bat >/dev/null 2>&1; then
-    mv ~/.zshrc.pre-oh-my-zsh ~/.zshrc
+  mv ~/.zshrc.pre-oh-my-zsh ~/.zshrc
 fi
