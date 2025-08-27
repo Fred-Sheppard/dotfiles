@@ -57,3 +57,14 @@ vim.keymap.del("n", "<leader>qd")
 vim.keymap.del("n", "<leader>qs")
 vim.keymap.del("n", "<leader>qS")
 set("n", "<leader>q", ":qa<CR>", opt)
+
+set("n", "<leader>r", ":!zellij action toggle-floating-panes<CR>", opt)
+
+-- Recent buffers
+vim.keymap.set("n", "<Tab>", function()
+    require("telescope.builtin").buffers({
+        sort_mru = true,
+        ignore_current_buffer = true,
+        initial_mode = "normal",
+    })
+end, { desc = "Switch buffers" })
