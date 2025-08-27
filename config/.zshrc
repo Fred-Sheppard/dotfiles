@@ -7,7 +7,7 @@ plugins=(git zsh-vi-mode rust zsh-autosuggestions zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 
-path=(~/bin/ $path)
+path=(~/bin $path)
 
 fpath=(~/.completions $fpath)
 
