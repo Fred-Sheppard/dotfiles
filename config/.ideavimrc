@@ -28,3 +28,4 @@ vnoremap P p
 nmap <Space><Space> <Action>(GotoFile)
 nnoremap <leader>fc :e ~/.ideavimrc<CR>
 nmap <leader>sg <Action>(SearchEverywhere)
+nnoremap <leader>w :w<CR>
