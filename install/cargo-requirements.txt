@@ -3,6 +3,7 @@ cargo-update
 du-dust
 eza
 fd-find
+gitui
 ripgrep
 starship
 trashy
