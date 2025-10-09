@@ -1,16 +1,19 @@
 return {
   "stevearc/conform.nvim",
   opts = function(_, opts)
-    -- Add the KDL formatter
     opts.formatters_by_ft = opts.formatters_by_ft or {}
-    opts.formatters_by_ft.kdl = { "kdlfmt" }
-
-    -- Register kdlfmt as a formatter
     opts.formatters = opts.formatters or {}
+
+    opts.formatters_by_ft.kdl = { "kdlfmt" }
     opts.formatters.kdlfmt = {
       command = "kdlfmt",
-      args = { "format", "-" }, -- The "--" argument tells it to read from stdin
+      args = { "format", "-" },
       stdin = true,
+    }
+
+    opts.formatters_by_ft.lua = { "stylua" }
+    opts.formatters.stylua = {
+      prepend_args = { "--indent-type", "Spaces", "--indent-width", "2" },
     }
   end,
 }
