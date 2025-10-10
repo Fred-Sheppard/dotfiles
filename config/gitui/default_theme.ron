@@ -1,12 +1,4 @@
 (
-    selection_bg: Some("black"),
-    cmdbar_bg: Some("black"),
-    command_fg: Some("reset")
-)
-
-// Defaults
-/*
-(
     selected_tab: Reset,
     command_fg: White,
     selection_bg: Blue,
@@ -29,4 +21,3 @@
     tag_fg: LightMagenta,
     branch_fg: LightYellow,
 )
-*/
