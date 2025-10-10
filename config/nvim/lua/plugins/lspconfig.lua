@@ -14,6 +14,11 @@ return {
             },
           },
         },
+        tinymist = {
+          settings = {
+            formatterMode = "typstyle",
+          },
+        },
       },
     },
   },
