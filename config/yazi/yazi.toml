@@ -1,0 +1,14 @@
+[opener]
+edit = [
+  { run = '$EDITOR "$@"', block = true, for = "unix" },
+]
+open = [
+  { run = 'open "$@"', desc = "Open" },
+]
+
+[open]
+prepend_rules = [
+	{ name = "*.html", use = "open" },
+
+	{ mime = "image/*", use = [ "open" ] },
+]
