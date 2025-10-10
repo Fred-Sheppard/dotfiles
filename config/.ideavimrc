@@ -5,19 +5,12 @@ set ideajoin
 
 " Commentary plugin
 Plug 'tpope/vim-commentary'
+Plug 'dbakker/vim-paragraph-motion'
 
 let mapleader=' '
 
 nnoremap <leader>a ggVG
-nmap <leader>cf <Action>(ReformatCode)
-nmap <leader>cd <Action>(ShowErrorDescription)
-nmap ]e <Action>(GotoNextError)
-nmap [e <Action>(GotoPreviousError)
-nmap <leader>ss <Action>(FileStructurePopup)
-nmap <leader>bb <Action>(BuildArtifact)
-nmap <leader>r <Action>(Run)
-" yank path
-nmap <leader>yp <Action>(CopyReference)
+nnoremap <leader>w :w<CR>
 nnoremap H ^
 nnoremap L $
 vnoremap H ^
@@ -25,7 +18,17 @@ vnoremap L $
 " Pasting doesn't override clipboard
 vnoremap p P
 vnoremap P p
+
+nmap <leader>cf <Action>(ReformatCode)
+nmap <leader>cd <Action>(ShowErrorDescription)
+nmap ]e <Action>(GotoNextError)
+nmap [e <Action>(GotoPreviousError)
+nmap <leader>ss <Action>(FileStructurePopup)
+nmap <leader>bb <Action>(BuildArtifact)
+nmap <leader>r <Action>(Run)
+nmap <leader>cr <Action>(RenameElement)
 nmap <Space><Space> <Action>(GotoFile)
-nnoremap <leader>fc :e ~/.ideavimrc<CR>
 nmap <leader>sg <Action>(SearchEverywhere)
-nnoremap <leader>w :w<CR>
+" yank path
+nmap <leader>yp <Action>(CopyReference)
+nnoremap <leader>fc :e ~/.ideavimrc<CR>
