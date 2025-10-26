@@ -88,3 +88,5 @@ vim.api.nvim_create_user_command("ExportTypst", function()
 end, {
   desc = "Export current Typst file to PDF",
 })
+
+vim.opt.mouse = ""
