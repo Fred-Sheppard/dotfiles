@@ -7,7 +7,7 @@ plugins=(git zsh-vi-mode rust zsh-autosuggestions zsh-syntax-highlighting safe-p
 
 source $ZSH/oh-my-zsh.sh
 
-path=(~/bin $path)
+path=(~/bin ~/.cargo/bin /home/fred/.local/share/bob/nvim-bin $path)
 
 fpath=(~/.completions $fpath)
 
@@ -27,11 +27,7 @@ bindkey -M vicmd H beginning-of-line
 bindkey -M vicmd L end-of-line
 
 # Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='vim'
-else
-  export EDITOR='nvim'
-fi
+export EDITOR=nvim
 export VISUAL=$EDITOR
 
 # EXPORTS
@@ -50,6 +46,7 @@ alias ls="eza"
 alias mkvenv="python3 -m venv .venv"
 alias vv="source .venv/bin/activate"
 alias zz="exec zsh"
+alias rm="trash-put"
 
 # FUNCTIONS
 tldr-less() {
@@ -96,7 +93,6 @@ eval "$(zoxide init zsh --cmd cd)"
 eval "$(zellij setup --generate-auto-start zsh)"
 eval "$(starship init zsh)"
 eval "$(fzf --zsh)"
-eval "$(ngrok completion)"
 
  export NVM_DIR="$HOME/.nvm"
   [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
