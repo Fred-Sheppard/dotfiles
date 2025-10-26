@@ -90,10 +90,8 @@ function dcdown() {
 
 # EVALS
 eval "$(zoxide init zsh --cmd cd)"
-eval "$(zellij setup --generate-auto-start zsh)"
 eval "$(starship init zsh)"
 eval "$(fzf --zsh)"
-
 
 function zr () { zellij run --name "$*" -- zsh -ic "$*";}
 function zrf () { zellij run --name "$*" --floating -- zsh -ic "$*";}
@@ -111,4 +109,3 @@ function zpipe () {
 
 # Device-specific config
 [ -f ~/.zshrc-device ] && source ~/.zshrc-device
-
