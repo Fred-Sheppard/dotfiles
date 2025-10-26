@@ -116,8 +116,6 @@ function zpipe () {
   fi
 }
 
-# Added by Windsurf
-export PATH="/Users/fred/.codeium/windsurf/bin:$PATH"
 # The following lines have been added by Docker Desktop to enable Docker CLI completions.
 fpath=(/Users/fred/.docker/completions $fpath)
 autoload -Uz compinit
