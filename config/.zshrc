@@ -46,7 +46,6 @@ alias ls="eza"
 alias mkvenv="python3 -m venv .venv"
 alias vv="source .venv/bin/activate"
 alias zz="exec zsh"
-alias rm="trash-put"
 
 # FUNCTIONS
 tldr-less() {
