@@ -11,3 +11,4 @@ rectangle
 shottr
 spotify
 stats
+tree-sitter-cli
