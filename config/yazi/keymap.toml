@@ -1,0 +1,7 @@
+[mgr]
+prepend_keymap = [
+	{ on = "Z",         run = "plugin fzf",                  desc = "Jump to a file/directory via fzf" },
+	{ on = "z",         run = "plugin zoxide",               desc = "Jump to a directory via zoxide" },
+	{ on = "O",         run = "open",                        desc = "Open selected files" },
+	{ on = "o",         run = "open --interactive",          desc = "Open selected files interactively" },
+]
