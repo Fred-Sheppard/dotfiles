@@ -1,17 +1,23 @@
-# Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
-
 ZSH_THEME="robbyrussell"
+
+# ============================================
+# OH-MY-ZSH OPTIMIZATIONS
+# ============================================
 
 plugins=(git zsh-vi-mode rust zsh-autosuggestions zsh-syntax-highlighting safe-paste)
 
 source $ZSH/oh-my-zsh.sh
 
+# ============================================
+# PATH & FPATH
+# ============================================
 path=(~/bin ~/.cargo/bin /home/fred/.local/share/bob/nvim-bin $path)
-
 fpath=(~/.completions $fpath)
 
-# zsh-vim-mode
+# ============================================
+# ZSH-VI-MODE CONFIG
+# ============================================
 zvm_after_init_commands+=("
 autoload -U up-line-or-beginning-search
 autoload -U down-line-or-beginning-search
@@ -26,17 +32,18 @@ bindkey -M viins '\e.' insert-last-word
 bindkey -M vicmd H beginning-of-line
 bindkey -M vicmd L end-of-line
 
-# Preferred editor for local and remote sessions
+# ============================================
+# EXPORTS
+# ============================================
 export EDITOR=nvim
 export VISUAL=$EDITOR
-
-# EXPORTS
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 export BAT_THEME="Catppuccin Mocha"
-export ZELLIJ_AUTO_ATTACH="true"
 export HOMEBREW_NO_ENV_HINTS="true"
 
+# ============================================
 # ALIASES
+# ============================================
 # Coloured help pages
 alias -g -- -h='-h 2>&1 | bat --language=help --style=plain --paging=always'
 alias -g -- --help='--help 2>&1 | bat --language=help --style=plain --paging=always'
@@ -47,13 +54,14 @@ alias mkvenv="python3 -m venv .venv"
 alias vv="source .venv/bin/activate"
 alias zz="exec zsh"
 
+# ============================================
 # FUNCTIONS
+# ============================================
 tldr-less() {
   if [ $# -eq 0 ]; then
     echo "Usage: tldr-less <command>"
     return 1
   fi
-
   tldr "$1" --color=always | bat --paging=always --style=plain
 }
 alias tl="tldr-less"
@@ -73,7 +81,6 @@ function dcup() {
     echo "Usage: dcup <file>"
     return 1
   fi
-
   docker-compose -f $1 up -d
 }
 
@@ -82,16 +89,12 @@ function dcdown() {
     echo "Usage: dcdown <file>"
     return 1
   fi
-
   docker-compose -f $1 down
 }
 
-
-# EVALS
-eval "$(zoxide init zsh --cmd cd)"
-eval "$(starship init zsh)"
-eval "$(fzf --zsh)"
-
+# ============================================
+# ZELLIJ FUNCTIONS
+# ============================================
 function zr () { zellij run --name "$*" -- zsh -ic "$*";}
 function zrf () { zellij run --name "$*" --floating -- zsh -ic "$*";}
 function zri () { zellij run --name "$*" --in-place -- zsh -ic "$*";}
@@ -106,5 +109,14 @@ function zpipe () {
   fi
 }
 
-# Device-specific config
+# ============================================
+# TOOL INITIALIZATIONS
+# ============================================
+eval "$(zoxide init zsh --cmd cd)"
+eval "$(starship init zsh)"
+eval "$(fzf --zsh)"
+
+# ============================================
+# DEVICE-SPECIFIC CONFIG
+# ============================================
 [ -f ~/.zshrc-device ] && source ~/.zshrc-device
