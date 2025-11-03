@@ -68,3 +68,4 @@ vim.keymap.set("n", "<Tab>", function()
         initial_mode = "normal",
     })
 end, { desc = "Switch buffers" })
+set("n", "<F12>", "<C-i>", opt)
