@@ -4,6 +4,31 @@
       "complex_modifications": {
         "rules": [
           {
+            "description": "Ctrl+I is F12 (vim fix)",
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "i",
+                  "modifiers": {
+                    "mandatory": [
+                      "left_control"
+                    ],
+                    "optional": []
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "f12",
+                    "modifiers": [
+                      "fn"
+                    ]
+                  }
+                ],
+                "type": "basic"
+              }
+            ]
+          },
+          {
             "description": "Shift CapsLock -> CapsLock",
             "manipulators": [
               {
