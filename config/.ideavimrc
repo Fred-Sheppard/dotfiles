@@ -2,10 +2,13 @@
 set scrolloff=3
 set clipboard=unnamedplus
 set ideajoin
+set quickscope
+let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
+set anyobject
 
-" Commentary plugin
 Plug 'tpope/vim-commentary'
 Plug 'dbakker/vim-paragraph-motion'
+Plug 'tpope/vim-surround'
 
 let mapleader=' '
 
@@ -32,3 +35,5 @@ nmap <leader>sg <Action>(SearchEverywhere)
 " yank path
 nmap <leader>yp <Action>(CopyReference)
 nnoremap <leader>fc :e ~/.ideavimrc<CR>
+
+nnoremap <silent> <leader> :WhichKey '<Space>'<CR>
