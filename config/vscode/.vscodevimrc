@@ -1,0 +1,10 @@
+" Line buffer around cursor
+set scrolloff=3
+
+" nnoremap <leader>a ggVG
+nnoremap <Space>a ggVG
+nnoremap H ^
+nnoremap L $
+vnoremap H ^
+vnoremap L $
+nnoremap <Space>w :w<CR>

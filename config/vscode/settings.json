@@ -1,0 +1,201 @@
+{
+  "cfs.telemetry.userId": "a3cec1b4-2018-4b6b-9547-103daf79b6e0",
+  "cfs.telemetry.enable": false,
+  "cfs.sdk.path": "/Applications/analog",
+  "vim.useSystemClipboard": true,
+  "vim.scroll": 3,
+  "vim.leader": " ",
+  "json.schemas": [],
+  "MAXIM_PATH": "/Users/fred/lib",
+  "vim.normalModeKeyBindingsNonRecursive": [
+    {
+      "before": [
+        "H"
+      ],
+      "after": [
+        "^"
+      ]
+    },
+    {
+      "before": [
+        "L"
+      ],
+      "after": [
+        "$"
+      ]
+    },
+    {
+      "before": [
+        "<leader>",
+        "w"
+      ],
+      "commands": [
+        ":w"
+      ]
+    },
+    {
+      "before": [
+        "K"
+      ],
+      "commands": [
+        "editor.action.showHover"
+      ]
+    },
+    {
+      "before": [
+        "<leader>",
+        "c",
+        "d"
+      ],
+      "commands": [
+        "editor.action.showHover"
+      ]
+    },
+    {
+      "before": [
+        "]",
+        "e"
+      ],
+      "commands": [
+        "editor.action.marker.next"
+      ]
+    },
+    {
+      "before": [
+        "[",
+        "e"
+      ],
+      "commands": [
+        "editor.action.marker.prev"
+      ]
+    },
+    {
+      "before": [
+        "<leader>",
+        "a"
+      ],
+      "after": [
+        "g",
+        "g",
+        "V",
+        "G"
+      ]
+    },
+    {
+      "before": [
+        "<leader>",
+        "s",
+        "s"
+      ],
+      "commands": [
+        "workbench.action.gotoSymbol"
+      ]
+    },
+    {
+      "before": [
+        "<leader>",
+        "b"
+      ],
+      "commands": [
+        "workbench.action.tasks.runTask"
+      ]
+    },
+    {
+      "before": [
+        "<leader>",
+        "<leader>"
+      ],
+      "commands": [
+        "workbench.action.quickOpen"
+      ]
+    },
+    {
+      "before": [
+        "<leader>",
+        "c",
+        "r"
+      ],
+      "commands": [
+        "editor.action.rename"
+      ]
+    },
+    {
+      "before": [
+        "<leader>",
+        "r"
+      ],
+      "commands": [
+        "workbench.action.tasks.runTask"
+      ]
+    }
+  ],
+  "vim.visualModeKeyBindingsNonRecursive": [
+    {
+      "before": [
+        "p"
+      ],
+      "after": [
+        "P"
+      ]
+    },
+    {
+      "before": [
+        "P"
+      ],
+      "after": [
+        "p"
+      ]
+    },
+    {
+      "before": [
+        "H"
+      ],
+      "after": [
+        "^"
+      ]
+    },
+    {
+      "before": [
+        "L"
+      ],
+      "after": [
+        "$"
+      ]
+    }
+  ],
+  "editor.formatOnSave": true,
+  "idf.hasWalkthroughBeenShown": true,
+  "idf.espIdfPath": "/Users/fred/esp/v5.5.1/esp-idf",
+  "idf.toolsPath": "/Users/fred/.espressif",
+  "idf.gitPath": "git",
+  "idf.pythonInstallPath": "/Users/fred/.local/share/uv/python/cpython-3.13.9-macos-aarch64-none/bin/python3.13",
+  "extensions.ignoreRecommendations": true,
+  "elf.tableFormatNumbers": {
+    "memory": {
+      "1": {
+        "address": "hex",
+        "size": "dec"
+      },
+      "2": {
+        "address": "hex",
+        "size": "dec"
+      },
+      "3": {
+        "address": "hex",
+        "size": "dec"
+      }
+    },
+    "stats": {
+      "sections": "dec",
+      "largestSym": "dec"
+    },
+    "symbols": {
+      "address": "hex",
+      "size": "dec",
+      "localstack": "dec",
+      "stack": "dec"
+    }
+  },
+  "git.autofetch": true,
+  "git.confirmSync": false
+}
