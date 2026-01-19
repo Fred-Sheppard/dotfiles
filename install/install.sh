@@ -1,64 +1,119 @@
 #!/usr/bin/env bash
+set -Eeuo pipefail
 
-# Exit on any error
-set -e
+log() { echo -e "\033[1;32m[INFO]\033[0m $*"; }
+fail() {
+  echo -e "\033[1;31m[ERROR]\033[0m $*" >&2
+  exit 1
+}
+command_exists() { command -v "$1" >/dev/null 2>&1; }
 
-# apt commands
+#######################################
+# System packages
+#######################################
 sudo apt-get update
 sudo apt-get upgrade -y
-sudo apt install -y $(cat apt-requirements.txt)
+sudo apt-get install -y $(xargs <apt-requirements.txt)
 
-# neovim
-if ! command -v nvim >/dev/null 2>&1; then
-  curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
-  sudo rm -rf /opt/nvim
-  sudo tar -C /opt -xzf nvim-linux64.tar.gz
-  # Path is handled in zshrc
+#######################################
+# Rust (rustup)
+#######################################
+if ! command_exists cargo; then
+  log "Installing Rust via rustup"
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs |
+    sh -s -- -y --no-modify-path
 fi
 
-# Install cargo binstall
-curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
-# Install other rust apps using cargo binstall
-cp cargo-env $HOME/.cargo/env
-export PATH="$HOME/.cargo/bin:$PATH"
-echo '. "$HOME/.cargo/env"' >>$HOME/.zshenv
+export CARGO_HOME="$HOME/.cargo"
+export RUSTUP_HOME="$HOME/.rustup"
+export PATH="$CARGO_HOME/bin:$PATH"
 
-if ! command -v cargo-binstall >/dev/null 2>&1; then
-  echo "Error: cargo-binstall not found. Likely an issue with \$PATH"
-  exit 1
+command_exists cargo || fail "Rust installation failed"
+
+#######################################
+# cargo-binstall
+#######################################
+if ! command_exists cargo-binstall; then
+  log "Installing cargo-binstall"
+  curl -L --proto '=https' --tlsv1.2 -sSf \
+    https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh |
+    bash
 fi
-cargo-binstall --no-confirm $(cat cargo-requirements.txt)
 
-# Link to dotfiles
-ln -fs $HOME/dotfiles/.zshrc $HOME/.zshrc
-mkdir -p $HOME/.config/nvim
-ln -fs $HOME/dotfiles/init.lua $HOME/.config/nvim/init.lua
-mkdir -p $HOME/.config/zellij/layouts
-mkdir -p $HOME/.local/share/zellij/
-ln -fs $HOME/dotfiles/status.kdl $HOME/.config/zellij/layouts/default.kdl
-ln -fs $HOME/dotfiles/starship.toml $HOME/.config/starship.toml
+command_exists cargo-binstall || fail "cargo-binstall not found"
 
+cargo-binstall --no-confirm $(xargs <cargo-requirements.txt)
+
+#######################################
+# Neovim (bob)
+#######################################
+bob use stable
+
+#######################################
+# Dotfiles
+#######################################
+ln -sfn "$HOME/dotfiles/.zshrc" "$HOME/.zshrc"
+mkdir -p "$HOME/.config/zellij/layouts"
+mkdir -p "$HOME/.local/share/zellij"
+ln -sfn "$HOME/dotfiles/status.kdl" \
+  "$HOME/.config/zellij/layouts/default.kdl"
+ln -sfn "$HOME/dotfiles/starship.toml" \
+  "$HOME/.config/starship.toml"
+
+#######################################
 # Bat theme
-if ! command -v bat >/dev/null 2>&1; then
-  bat_config=$(bat --config-dir)
-  mkdir -p "$bat_config/themes"
-  wget -P "$bat_config/themes" https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Mocha.tmTheme
+#######################################
+if command_exists bat; then
+  BAT_CONFIG_DIR="$(bat --config-dir)"
+  mkdir -p "$BAT_CONFIG_DIR/themes"
+  wget -q -O "$BAT_CONFIG_DIR/themes/Catppuccin Mocha.tmTheme" \
+    https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Mocha.tmTheme
   bat cache --build
-  echo '--theme="Catppuccin Mocha"' >>"$bat_config/config"
-else
-  echo "Bat not installed, skipping themes"
+  grep -q Catppuccin "$BAT_CONFIG_DIR/config" 2>/dev/null ||
+    echo '--theme="Catppuccin Mocha"' >>"$BAT_CONFIG_DIR/config"
 fi
 
-# Oh My Zsh!
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-# zsh-vi-mode
-git clone https://github.com/jeffreytse/zsh-vi-mode $HOME/.oh-my-zsh/custom/plugins/zsh-vi-mode
-# fish-style autocompletion
-git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-# fish-style syntax highlighting
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-
-# If rust commands were not successful, then we shouldn't override cat, ls etc.
-if ! command -v bat >/dev/null 2>&1; then
-  mv ~/.zshrc.pre-oh-my-zsh ~/.zshrc
+#######################################
+# Oh My Zsh
+#######################################
+if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
+  RUNZSH=no CHSH=no sh -c \
+    "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 fi
+
+ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+git clone https://github.com/jeffreytse/zsh-vi-mode \
+  "$ZSH_CUSTOM/plugins/zsh-vi-mode" 2>/dev/null || true
+git clone https://github.com/zsh-users/zsh-autosuggestions \
+  "$ZSH_CUSTOM/plugins/zsh-autosuggestions" 2>/dev/null || true
+git clone https://github.com/zsh-users/zsh-syntax-highlighting \
+  "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" 2>/dev/null || true
+
+#######################################
+# NVM + Node (LTS)
+#######################################
+if [[ ! -d "$HOME/.nvm" ]]; then
+  curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+fi
+
+export NVM_DIR="$HOME/.nvm"
+source "$NVM_DIR/nvm.sh"
+nvm install --lts
+nvm use --lts
+
+#######################################
+# win32yank (WSL)
+#######################################
+if grep -qi microsoft /proc/version && ! command_exists win32yank.exe; then
+  TMP="$(mktemp -d)"
+  wget -q -O "$TMP/win32yank.zip" \
+    https://github.com/equalsraf/win32yank/releases/latest/download/win32yank-x64.zip
+  unzip -q "$TMP/win32yank.zip" -d "$TMP"
+  sudo mv "$TMP/win32yank.exe" /usr/local/bin/
+  sudo chmod +x /usr/local/bin/win32yank.exe
+  rm -rf "$TMP"
+fi
+
+log "Setup complete 🚀 Restart your shell."
+log "Next steps:"
+log "Install a NerdFont"
