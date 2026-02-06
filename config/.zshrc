@@ -18,16 +18,13 @@ fpath=(~/.completions $fpath)
 # ============================================
 # ZSH-VI-MODE CONFIG
 # ============================================
-zvm_after_init_commands+=("
-autoload -U up-line-or-beginning-search
-autoload -U down-line-or-beginning-search
-zle -N up-line-or-beginning-search
-zle -N down-line-or-beginning-search
-bindkey '^[[A' up-line-or-beginning-search
-bindkey '^[[B' down-line-or-beginning-search
-bindkey -a 'k' up-line-or-beginning-search
-bindkey -a 'j' down-line-or-beginning-search
-")
+source /opt/homebrew/share/zsh-history-substring-search/zsh-history-substring-search.zsh
+
+bindkey -a 'k' history-substring-search-up
+bindkey -a 'j' history-substring-search-down
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
+
 bindkey -M viins '\e.' insert-last-word
 bindkey -M vicmd H beginning-of-line
 bindkey -M vicmd L end-of-line
