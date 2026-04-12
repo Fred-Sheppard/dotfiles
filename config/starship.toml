@@ -1,3 +1,5 @@
+format = "${custom.git_wip}$all"
+
 right_format = "$time"
 
 [time]
@@ -5,6 +7,14 @@ disabled = false
 format = "[$time]($style)"
 time_format = "%H:%M"
 style = "dimmed white"
+
+[custom.git_wip]
+description = "Show warning when HEAD commit is a WIP"
+command     = "echo '⚠ WIP'"
+when        = """git log -1 --pretty=%s 2>/dev/null | grep -qF -- '--wip--'"""
+shell       = ["bash", "--noprofile", "--norc"]
+style       = "bold fg:#D85A30 bg:#FAECE7"
+format      = "[ $output ]($style) "
 
 [aws]
 symbol = "  "
