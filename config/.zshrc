@@ -120,16 +120,24 @@ git-dopush() {
 # Full pipeline: switch → rebase → dopush
 git-ship() {
   local current=$(git branch --show-current)
+  local no_push=0
+
+  for arg in "$@"; do
+    case "$arg" in
+      --no-push) no_push=1 ;;
+      *) echo "Unknown argument: $arg" >&2; return 1 ;;
+    esac
+  done
+
   if [[ "$current" != */dev ]]; then
     echo "Error: current branch '$current' does not end with /dev" >&2
     return 1
   fi
-
   git-switch || return 1
-
   git rebase -i main --autosquash || return 1
-
-  git-dopush
+  if [[ $no_push -eq 0 ]]; then
+    git-dopush
+  fi
 }
 
 # ============================================
