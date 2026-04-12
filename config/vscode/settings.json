@@ -127,6 +127,16 @@
       "commands": [
         "workbench.action.tasks.runTask"
       ]
+    },
+    {
+      "before": [
+        "<leader>",
+        "c",
+        "y"
+      ],
+      "commands": [
+        "copy-relative-path-and-line-numbers.both"
+      ]
     }
   ],
   "vim.visualModeKeyBindingsNonRecursive": [
