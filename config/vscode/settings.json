@@ -207,5 +207,6 @@
     }
   },
   "git.autofetch": true,
-  "git.confirmSync": false
+  "git.confirmSync": false,
+  "workbench.colorTheme": "Catppuccin Mocha",
 }
