@@ -89,6 +89,49 @@ function dcdown() {
   docker-compose -f $1 down
 }
 
+# GIT FUNCTIONS
+# Create/reset the push branch from current dev branch
+git-switch() {
+  local current=$(git branch --show-current)
+  if [[ "$current" != */dev ]]; then
+    echo "Error: current branch '$current' does not end with /dev" >&2
+    return 1
+  fi
+  local push_branch="${current%/dev}/push"
+  git switch -C "$push_branch"
+}
+
+# Push and switch back to dev branch
+git-dopush() {
+  local current=$(git branch --show-current)
+  if [[ "$current" != */push ]]; then
+    echo "Error: current branch '$current' does not end with /push" >&2
+    return 1
+  fi
+  local dev_branch="${current%/push}/dev"
+  if ! git show-ref --verify --quiet "refs/heads/$dev_branch"; then
+    echo "Error: dev branch '$dev_branch' does not exist" >&2
+    return 1
+  fi
+  local upstream="${current%/push}"
+  git push --force-with-lease --set-upstream origin "$current:$upstream" && git switch "$dev_branch"
+}
+
+# Full pipeline: switch → rebase → dopush
+git-ship() {
+  local current=$(git branch --show-current)
+  if [[ "$current" != */dev ]]; then
+    echo "Error: current branch '$current' does not end with /dev" >&2
+    return 1
+  fi
+
+  git-switch || return 1
+
+  git rebase -i main --autosquash || return 1
+
+  git-dopush
+}
+
 # ============================================
 # ZELLIJ FUNCTIONS
 # ============================================
