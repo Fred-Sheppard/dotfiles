@@ -117,25 +117,49 @@ git-dopush() {
   git push --force-with-lease --set-upstream origin "$current:$upstream" && git switch "$dev_branch"
 }
 
+_git_rebase_check_empty() {
+  git rebase -i "$@" 2>/tmp/git-rebase-err
+  local exit_code=$?
+
+  # Use /bin/cat instead of bat
+  /bin/cat /tmp/git-rebase-err >&2
+
+  if [[ $exit_code -ne 0 ]] && grep -q "nothing to do" /tmp/git-rebase-err; then
+    return 2
+  fi
+
+  return $exit_code
+}
+
 # Full pipeline: switch → rebase → dopush
 git-ship() {
   local current=$(git branch --show-current)
-  local no_push=0
-
+  local push=0
   for arg in "$@"; do
     case "$arg" in
-      --no-push) no_push=1 ;;
+      --push) push=1 ;;
       *) echo "Unknown argument: $arg" >&2; return 1 ;;
     esac
   done
-
   if [[ "$current" != */dev ]]; then
     echo "Error: current branch '$current' does not end with /dev" >&2
     return 1
   fi
+
   git-switch || return 1
-  git rebase -i main --autosquash || return 1
-  if [[ $no_push -eq 0 ]]; then
+
+  _git_rebase_check_empty main --autosquash
+  local rebase_exit=$?
+
+  if [[ $rebase_exit -eq 2 ]]; then
+    echo "Rebase aborted (empty todo). Returning to '$current'." >&2
+    git checkout "$current"
+    return 1
+  elif [[ $rebase_exit -ne 0 ]]; then
+    return $rebase_exit
+  fi
+
+  if [[ $push -eq 1 ]]; then
     git-dopush
   fi
 }
