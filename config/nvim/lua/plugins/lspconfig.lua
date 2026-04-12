@@ -4,6 +4,7 @@ return {
     opts = {
       servers = {
         harper_ls = {
+          filetypes = { "typ" },
           settings = {
             ["harper-ls"] = {
               linters = {
