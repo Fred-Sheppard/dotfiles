@@ -90,15 +90,19 @@ function dcdown() {
 }
 
 # GIT FUNCTIONS
-# Create/reset the push branch from current dev branch
 git-switch() {
   local current=$(git branch --show-current)
-  if [[ "$current" != */dev ]]; then
-    echo "Error: current branch '$current' does not end with /dev" >&2
+  
+  if [[ "$current" == */dev ]]; then
+    local push_branch="${current%/dev}/push"
+    git switch -C "$push_branch"
+  elif [[ "$current" == */push ]]; then
+    local dev_branch="${current%/push}/dev"
+    git switch "$dev_branch"
+  else
+    echo "Error: current branch '$current' must end with /dev or /push" >&2
     return 1
   fi
-  local push_branch="${current%/dev}/push"
-  git switch -C "$push_branch"
 }
 
 # Push and switch back to dev branch
