@@ -60,4 +60,8 @@ else
 fi
 # End of Docker CLI completions
 
-rellij
+# Only run rellij if not in VSCode or IntelliJ terminal
+if [[ -z "$VSCODE_INJECTION" && "$TERM_PROGRAM" != "vscode" && "$TERMINAL_EMULATOR" != "JetBrains-JediTerm" ]]; then
+  rellij
+fi
+
