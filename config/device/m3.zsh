@@ -61,23 +61,3 @@ fi
 # End of Docker CLI completions
 
 rellij
-# Set MAXIM_PATH to point to the MSDK
-export MAXIM_PATH=/Users/fred/lib
-
-# Add Arm Embedded GCC to path (v10.3)
-export ARM_GCC_ROOT=$MAXIM_PATH/Tools/GNUTools/10.3
-export PATH=$ARM_GCC_ROOT/bin:$PATH
-
-# Add xPack RISC-V GCC to path (v12.2)
-export XPACK_GCC_ROOT=$MAXIM_PATH/Tools/xPack/riscv-none-elf-gcc/12.2.0-3.1
-export PATH=$XPACK_GCC_ROOT/bin:$PATH
-
-# Add OpenOCD to path
-export OPENOCD_ROOT=$MAXIM_PATH/Tools/OpenOCD
-export PATH=$OPENOCD_ROOT:$PATH
-
-export MAKE_ROOT=$MAXIM_PATH/Tools/GNUTools/Make
-export PATH=$MAKE_ROOT:$PATH
-
-export PATH=/opt/homebrew/opt/ccache/libexec:$PATH
-export PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"
