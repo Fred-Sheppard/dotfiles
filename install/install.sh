@@ -108,6 +108,8 @@ git clone https://github.com/zsh-users/zsh-autosuggestions \
   "$ZSH_CUSTOM/plugins/zsh-autosuggestions" 2>/dev/null || true
 git clone https://github.com/zsh-users/zsh-syntax-highlighting \
   "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" 2>/dev/null || true
+git clone https://github.com/zsh-users/zsh-history-substring-search.git \
+  "$ZSH_CUSTOM/plugins/zsh-history-substring-search"
 
 #######################################
 # NVM + Node (LTS)

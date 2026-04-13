@@ -5,7 +5,7 @@ ZSH_THEME="robbyrussell"
 # OH-MY-ZSH OPTIMIZATIONS
 # ============================================
 
-plugins=(git zsh-vi-mode rust zsh-autosuggestions zsh-syntax-highlighting safe-paste)
+plugins=(git zsh-vi-mode rust zsh-autosuggestions zsh-syntax-highlighting safe-paste zsh-history-substring-search)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -18,7 +18,14 @@ fpath=(~/.completions $fpath)
 # ============================================
 # ZSH-VI-MODE CONFIG
 # ============================================
-source /opt/homebrew/share/zsh-history-substring-search/zsh-history-substring-search.zsh
+source $ZSH_CUSTOM/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
+# Disable highlighting
+HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=''
+HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND=''
+# Compress all identical instructions into one
+HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1
+# `ls` matches `ls -l` but not `echo 'ls'`
+HISTORY_SUBSTRING_SEARCH_PREFIXED=1
 
 bindkey -a 'k' history-substring-search-up
 bindkey -a 'j' history-substring-search-down
