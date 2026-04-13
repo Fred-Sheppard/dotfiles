@@ -189,7 +189,10 @@ function zpipe () {
 # TOOL INITIALIZATIONS
 # ============================================
 eval "$(zoxide init zsh --cmd cd)"
-eval "$(starship init zsh)"
+
+if [[ "$TERM_PROGRAM" != "vscode" ]]; then
+  eval "$(starship init zsh)"
+fi
 
 # ============================================
 # DEVICE-SPECIFIC CONFIG
