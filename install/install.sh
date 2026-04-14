@@ -74,6 +74,26 @@ if command_exists bat; then
 fi
 
 #######################################
+# Zellij & Rellij
+#######################################
+ZELLIJ_FORK_REPO="Fred-Sheppard/zellij"
+ZELLIJ_FORK_BINARY_PREFIX="zellij"
+ZELLIJ_FORK_BINARY_SUFFIX="x86_64-linux"
+
+# Get the latest release tag (e.g. "v0.44.1-rellij")
+ZELLIJ_FORK_TAG=$(curl -s "https://api.github.com/repos/${ZELLIJ_FORK_REPO}/releases/latest" |
+  grep '"tag_name"' |
+  head -1 |
+  sed 's/.*"tag_name": *"\(.*\)".*/\1/')
+
+# Build the filename and URL
+ZELLIJ_FORK_FILENAME="${ZELLIJ_FORK_BINARY_PREFIX}-${ZELLIJ_FORK_TAG}-${ZELLIJ_FORK_BINARY_SUFFIX}"
+ZELLIJ_FORK_URL="https://github.com/${ZELLIJ_FORK_REPO}/releases/download/${ZELLIJ_FORK_TAG}/${ZELLIJ_FORK_FILENAME}"
+
+wget -q -P "$HOME/.cargo/bin/" $ZELLIJ_FORK_URL
+ln -s "$HOME/.cargo/bin/$ZELLIJ_FORK_FILENAME" "$HOME/.cargo/bin/zellij"
+
+#######################################
 # Oh My Zsh
 #######################################
 if [[ ! -d "$HOME/.oh-my-zsh" ]]; then

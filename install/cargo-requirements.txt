@@ -10,5 +10,4 @@ starship
 trashy
 tealdeer
 yazi-fm
-zellij
 zoxide
