@@ -175,6 +175,24 @@ git-ship() {
   fi
 }
 
+function recent_branches() {
+  git reflog --pretty='%gs' \
+    | grep -E 'checkout: moving from|branch: Created from' \
+    | awk '
+        /checkout: moving from/ { print $NF }
+        /branch: Created from/ { print $1 }
+      ' \
+    | awk '!seen[$0]++'
+}
+alias gb=recent_branches
+
+function checkout_recent_branch() {
+  local branch
+  branch=$(recent_branches | fzf --no-multi --prompt="Recent branches: ") || return
+  git checkout "$branch"
+}
+alias gbb=checkout_recent_branch
+
 # ============================================
 # ZELLIJ FUNCTIONS
 # ============================================
