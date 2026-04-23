@@ -4,3 +4,4 @@
 
 vim.o.guifont = "JetBrainsMono Nerd Font:h16"
 vim.opt.shiftwidth = 2
+vim.opt.relativenumber = false
