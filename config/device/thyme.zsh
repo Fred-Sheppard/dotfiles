@@ -1,7 +1,6 @@
 # Device Specific zshrc options
 # Device: thyme
 rellij
-zellij action switch-mode locked
 
 alias rm=trash-put
 
