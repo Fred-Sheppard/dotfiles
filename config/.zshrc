@@ -193,6 +193,21 @@ function checkout_recent_branch() {
 }
 alias gbb=checkout_recent_branch
 
+scopy() {
+  # Read input (argument or stdin)
+  if [ -t 0 ]; then
+    data="$*"
+  else
+    data="$(cat)"
+  fi
+
+  # Base64 encode (no line wrapping)
+  b64=$(printf "%s" "$data" | base64 | tr -d '\n')
+
+  # Send OSC 52 escape sequence
+  printf "\033]52;c;%s\a" "$b64"
+}
+
 # ============================================
 # ZELLIJ FUNCTIONS
 # ============================================
@@ -219,7 +234,4 @@ if [[ "$TERM_PROGRAM" != "vscode" ]]; then
   eval "$(starship init zsh)"
 fi
 
-# ============================================
-# DEVICE-SPECIFIC CONFIG
-# ============================================
 [ -f ~/.zshrc-device ] && source ~/.zshrc-device
