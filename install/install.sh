@@ -90,8 +90,22 @@ ZELLIJ_FORK_TAG=$(curl -s "https://api.github.com/repos/${ZELLIJ_FORK_REPO}/rele
 ZELLIJ_FORK_FILENAME="${ZELLIJ_FORK_BINARY_PREFIX}-${ZELLIJ_FORK_TAG}-${ZELLIJ_FORK_BINARY_SUFFIX}"
 ZELLIJ_FORK_URL="https://github.com/${ZELLIJ_FORK_REPO}/releases/download/${ZELLIJ_FORK_TAG}/${ZELLIJ_FORK_FILENAME}"
 
-wget -q -P "$HOME/.cargo/bin/" $ZELLIJ_FORK_URL
-ln -s "$HOME/.cargo/bin/$ZELLIJ_FORK_FILENAME" "$HOME/.cargo/bin/zellij"
+BIN_DIR="$HOME/.cargo/bin"
+
+wget -q -P $BIN_DIR $ZELLIJ_FORK_URL
+
+ZELLIJ_FORK_FILE="$BIN_DIR/$ZELLIJ_FORK_FILENAME"
+chmod +x "$ZELLIJ_FORK_FILE"
+
+# Backup existing zellij if it exists (file or symlink)
+ZELLIJ_FORK_TARGET="$BIN_DIR/zellij"
+if [ -e "$ZELLIJ_FORK_TARGET" ] || [ -L "$ZELLIJ_FORK_TARGET" ]; then
+  log "Backing up $ZELLIJ_FORK_TARGET to $BIN_DIR/zellij.bak"
+  mv -f "$ZELLIJ_FORK_TARGET" "$BIN_DIR/zellij.bak"
+fi
+
+# Create symlink to new binary
+ln -s "$ZELLIJ_FORK_FILE" "$ZELLIJ_FORK_TARGET"
 
 #######################################
 # Oh My Zsh
