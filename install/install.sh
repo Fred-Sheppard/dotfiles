@@ -73,39 +73,8 @@ if command_exists bat; then
     echo '--theme="Catppuccin Mocha"' >>"$BAT_CONFIG_DIR/config"
 fi
 
-#######################################
-# Zellij & Rellij
-#######################################
-ZELLIJ_FORK_REPO="Fred-Sheppard/zellij"
-ZELLIJ_FORK_BINARY_PREFIX="zellij"
-ZELLIJ_FORK_BINARY_SUFFIX="x86_64-linux"
-
-# Get the latest release tag (e.g. "v0.44.1-rellij")
-ZELLIJ_FORK_TAG=$(curl -s "https://api.github.com/repos/${ZELLIJ_FORK_REPO}/releases/latest" |
-  grep '"tag_name"' |
-  head -1 |
-  sed 's/.*"tag_name": *"\(.*\)".*/\1/')
-
-# Build the filename and URL
-ZELLIJ_FORK_FILENAME="${ZELLIJ_FORK_BINARY_PREFIX}-${ZELLIJ_FORK_TAG}-${ZELLIJ_FORK_BINARY_SUFFIX}"
-ZELLIJ_FORK_URL="https://github.com/${ZELLIJ_FORK_REPO}/releases/download/${ZELLIJ_FORK_TAG}/${ZELLIJ_FORK_FILENAME}"
-
-BIN_DIR="$HOME/.cargo/bin"
-
-wget -q -P $BIN_DIR $ZELLIJ_FORK_URL
-
-ZELLIJ_FORK_FILE="$BIN_DIR/$ZELLIJ_FORK_FILENAME"
-chmod +x "$ZELLIJ_FORK_FILE"
-
-# Backup existing zellij if it exists (file or symlink)
-ZELLIJ_FORK_TARGET="$BIN_DIR/zellij"
-if [ -e "$ZELLIJ_FORK_TARGET" ] || [ -L "$ZELLIJ_FORK_TARGET" ]; then
-  log "Backing up $ZELLIJ_FORK_TARGET to $BIN_DIR/zellij.bak"
-  mv -f "$ZELLIJ_FORK_TARGET" "$BIN_DIR/zellij.bak"
-fi
-
-# Create symlink to new binary
-ln -s "$ZELLIJ_FORK_FILE" "$ZELLIJ_FORK_TARGET"
+log "Pulling zellij fork"
+bash ./pull-zellij-fork.sh
 
 #######################################
 # Oh My Zsh
