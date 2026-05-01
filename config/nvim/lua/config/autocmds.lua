@@ -2,31 +2,47 @@
 -- Default autocmds that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/autocmds.lua
 -- Add any additional autocmds here
 
--- Auto-change to the file's directory on open
-vim.api.nvim_create_autocmd("BufEnter", {
-  pattern = "*",
-  callback = function()
-    -- Get the buffer name (file path associated with the buffer)
-    local bufname = vim.fn.bufname("%")
+-- On startup only: if Neovim was opened with a path (e.g. `nvim foo/bar`), set cwd to
+-- that directory (or the file's parent). Does not run on buffer switches — unlike BufEnter.
+local did_cd_from_initial_argv = false
+local function cd_to_first_startup_arg()
+  if did_cd_from_initial_argv then
+    return
+  end
+  local argv = vim.fn.argv()
+  if #argv == 0 then
+    return
+  end
+  local first = argv[1]
+  if first == nil or first == "" then
+    return
+  end
+  if type(first) == "string" and first:find("^%a[%w+.-]*://") then
+    return
+  end
+  local full = vim.fn.fnamemodify(first, ":p")
+  local target ---@type string
+  if vim.fn.isdirectory(full) == 1 then
+    target = full
+  else
+    target = vim.fn.fnamemodify(full, ":p:h")
+  end
+  if target == "" or vim.fn.isdirectory(target) ~= 1 then
+    return
+  end
+  vim.api.nvim_set_current_dir(target)
+  did_cd_from_initial_argv = true
+end
 
-    -- Proceed only if the buffer has a name (i.e., it's not an unnamed buffer like [No Name])
-    if bufname ~= "" and bufname ~= "[No Name]" then
-      -- Get the absolute path to the directory containing the buffer's file
-      -- :p expands to full path, :h gets the head (directory part)
-      local target_dir = vim.fn.fnamemodify(bufname, ":p:h")
-
-      -- Check if the calculated directory path is not empty and actually exists on the filesystem
-      -- vim.fn.isdirectory() returns 1 if it exists and is a directory, 0 otherwise.
-      if target_dir ~= "" and vim.fn.isdirectory(target_dir) == 1 then
-        -- Use fnameescape to handle potential spaces or special characters in the path
-        local escaped_dir = vim.fn.fnameescape(target_dir)
-        -- Change the current working directory
-        vim.cmd("cd " .. escaped_dir)
-      end
-    end
-  end,
-  desc = "Change CWD to buffer's directory on entering buffer", -- Optional description
+vim.api.nvim_create_autocmd("VimEnter", {
+  once = true,
+  nested = true,
+  callback = cd_to_first_startup_arg,
 })
+
+if vim.v.vim_did_enter == 1 then
+  cd_to_first_startup_arg()
+end
 
 -- Switch out of locked mode when the editor exits
 -- vim.api.nvim_create_autocmd("VimLeave", {
