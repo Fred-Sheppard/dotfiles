@@ -44,19 +44,8 @@ if vim.v.vim_did_enter == 1 then
   cd_to_first_startup_arg()
 end
 
--- Switch out of locked mode when the editor exits
--- vim.api.nvim_create_autocmd("VimLeave", {
---     pattern = "*",
---     callback = function()
---         vim.cmd("echo activated >> /Users/fredsheppard/log.txt")
---     end,
--- })
-
--- In ~/.config/nvim/lua/config/autocmds.lua or similar
 vim.filetype.add({
   extension = {
     kdl = "kdl",
   },
 })
-
--- vim.opt.mouse = ""
