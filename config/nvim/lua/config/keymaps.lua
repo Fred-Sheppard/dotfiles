@@ -55,3 +55,8 @@ vim.keymap.set("n", "<Tab>", function()
 end, { desc = "Switch buffers" })
 
 set("n", "<F12>", "<C-i>", opt)
+
+vim.keymap.set("n", "<leader>fc", function()
+  local dir = vim.fn.stdpath("config")
+  require("telescope.builtin").find_files({ cwd = dir })
+end, { desc = "Find Config File and change CWD" })
