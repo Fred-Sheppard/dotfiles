@@ -49,8 +49,8 @@ export HOMEBREW_NO_ENV_HINTS="true"
 # ALIASES
 # ============================================
 # Coloured help pages
-alias -g -- -h='-h 2>&1 | bat --language=help --style=plain --paging=always'
-alias -g -- --help='--help 2>&1 | bat --language=help --style=plain --paging=always'
+alias -g -- -h='-h 2>&1 | bat --language=help --style=plain --paging=never'
+alias -g -- --help='--help 2>&1 | bat --language=help --style=plain --paging=never'
 alias zrc='nvim ~/.zshrc'
 alias cat="bat"
 alias ls="eza"
