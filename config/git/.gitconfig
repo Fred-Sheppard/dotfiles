@@ -1,0 +1,10 @@
+[user]
+	name = Fred Sheppard
+	email = frederickjssheppard@gmail.com
+[core]
+	autocrlf = input
+	excludesfile = /Users/fred/.gitignore_global
+[rebase]
+	autoStash = true
+[init]
+	defaultBranch = main
