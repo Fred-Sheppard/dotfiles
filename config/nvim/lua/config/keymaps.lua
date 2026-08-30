@@ -9,11 +9,20 @@ local opt = {
 
 local set = vim.keymap.set
 
-set("n", "<leader>a", "ggVG", opt)
-set({ "n", "v" }, "H", "^", opt)
-set({ "n", "v" }, "L", "$", opt)
-set({ "n", "v" }, "gH", "g^", opt)
-set({ "n", "v" }, "gL", "g$", opt)
+-- Go to start/end of the current visual line,
+-- only when softwrap is enabled
+local function wrap_aware(motion, fallback)
+  return function()
+    return vim.wo.wrap and motion or fallback
+  end
+end
+
+local wrap_opt = { expr = true, noremap = true, silent = true }
+
+set({ "n", "x", "o" }, "L", wrap_aware("g$", "$"), wrap_opt)
+set({ "n", "x", "o" }, "H", wrap_aware("g^", "^"), wrap_opt)
+
+set({ "n", "x", "o" }, "<leader>a", "ggVG", opt)
 set("n", "<Tab>", ":bnext<CR>", opt) -- Next buffer
 set("n", "<S-Tab>", ":bprevious<CR>", opt) -- Previous buffer
 
