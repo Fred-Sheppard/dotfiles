@@ -36,8 +36,10 @@ set("n", "zz", function()
 end, opt)
 
 -- P pastes without overriding the register - allows multiple pastes of the same thing
-set("v", "p", "P", opt)
-set("v", "P", "p", opt)
+-- Using x instead of v allows p to work in snippets, which use vim's "Select" mode
+-- under the hood
+set("x", "p", "P", opt)
+set("x", "P", "p", opt)
 
 set("n", "<leader>w", ":w<CR>", opt)
 
