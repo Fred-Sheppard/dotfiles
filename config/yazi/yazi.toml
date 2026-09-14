@@ -3,7 +3,8 @@ edit = [
   { run = '$EDITOR "%s"', block = true},
 ]
 open = [
-  { run = 'open "%s"', desc = "Open" },
+  { run = 'open "%s"', desc = "Open", orphan = true, for = 'macos' },
+  { run = 'xdg-open "%s"', desc = "Open", orphan = true, for = 'linux' },
 ]
 
 [open]
