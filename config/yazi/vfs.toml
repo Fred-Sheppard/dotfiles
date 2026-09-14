@@ -1,5 +1,4 @@
-[services.thyme]
-type = "sftp"
+[sftp.thyme]
 host = "thyme.tailc8b49c.ts.net"
 user = "fred"
 port = 22
