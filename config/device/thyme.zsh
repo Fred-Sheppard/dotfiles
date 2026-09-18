@@ -1,6 +1,5 @@
 # Device Specific zshrc options
 # Device: thyme
-rellij
 
 alias rm=trash-put
 alias battery=acpi
@@ -11,3 +10,5 @@ fpath=(/Users/fred/.docker/completions $fpath)
 autoload -Uz compinit
 compinit
 # # End of Docker CLI completions
+
+rellij
