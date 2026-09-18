@@ -3,6 +3,7 @@
 rellij
 
 alias rm=trash-put
+alias battery=acpi
 
 source /usr/share/nvm/init-nvm.sh
 # # The following lines have been added by Docker Desktop to enable Docker CLI completions.
