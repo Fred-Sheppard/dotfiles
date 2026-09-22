@@ -18,7 +18,7 @@ Linux)
   if grep -qi microsoft /proc/version 2>/dev/null; then
     alias open="explorer.exe"
     alias copy="clip.exe"
-    path=("/mnt/c/Users/frederick.sheppard/scoop/shims" $path)
+    # path=("/mnt/c/Users/frederick.sheppard/scoop/shims" $path)
   else
     alias rm="trash-put"
     alias battery="acpi"
@@ -119,7 +119,12 @@ dcdown() {
 
 # ============================================
 # GIT FUNCTIONS
+# (the omz git plugin loads first so our own git-* functions/aliases
+# below can override any of its aliases we redefine, e.g. gb)
 # ============================================
+clipcopy() { scopy "$@"; }
+source "$ZSH_DIR/vendor/omz-git/git.plugin.zsh"
+
 git-switch() {
   local current=$(git branch --show-current)
   if [[ "$current" == */dev ]]; then
@@ -227,11 +232,6 @@ zpipe() {
   fi
 }
 
-if [[ -z "$VSCODE_INJECTION" && "$TERM_PROGRAM" != "vscode" &&
-  "$TERMINAL_EMULATOR" != "JetBrains-JediTerm" && -z "$INTELLIJ_ENVIRONMENT_READER" ]]; then
-  rellij
-fi
-
 # ============================================
 # TOOL INITIALIZATIONS
 # ============================================
@@ -240,3 +240,9 @@ eval "$(zoxide init zsh --cmd cd)"
 if [[ "$TERM_PROGRAM" != "vscode" ]]; then
   eval "$(starship init zsh)"
 fi
+
+if [[ -z "$VSCODE_INJECTION" && "$TERM_PROGRAM" != "vscode" &&
+  "$TERMINAL_EMULATOR" != "JetBrains-JediTerm" && -z "$INTELLIJ_ENVIRONMENT_READER" ]]; then
+  rellij
+fi
+
