@@ -11,6 +11,11 @@ command_exists() { command -v "$1" >/dev/null 2>&1; }
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OS="$(uname)"
 
+# Root (common in bare containers) needs no sudo, and it's often not
+# even installed there.
+SUDO=""
+[[ "$(id -u)" -ne 0 ]] && SUDO="sudo"
+
 #######################################
 # System packages
 #######################################
@@ -31,9 +36,9 @@ Darwin)
   brew install fzf cargo-binstall
   ;;
 Linux)
-  sudo apt-get update
-  sudo apt-get upgrade -y
-  sudo apt-get install -y fzf gcc zsh
+  $SUDO apt-get update
+  $SUDO apt-get upgrade -y
+  $SUDO apt-get install -y fzf gcc zsh
   ;;
 *)
   fail "Unsupported OS: $OS"
@@ -148,8 +153,8 @@ if [[ "$OS" == "Linux" ]] && grep -qi microsoft /proc/version && ! command_exist
   curl -fsSL -o "$TMP/win32yank.zip" \
     https://github.com/equalsraf/win32yank/releases/latest/download/win32yank-x64.zip
   unzip -q "$TMP/win32yank.zip" -d "$TMP"
-  sudo mv "$TMP/win32yank.exe" /usr/local/bin/
-  sudo chmod +x /usr/local/bin/win32yank.exe
+  $SUDO mv "$TMP/win32yank.exe" /usr/local/bin/
+  $SUDO chmod +x /usr/local/bin/win32yank.exe
   rm -rf "$TMP"
 fi
 
