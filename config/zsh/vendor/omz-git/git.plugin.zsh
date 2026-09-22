@@ -2,8 +2,6 @@
 # (https://github.com/ohmyzsh/ohmyzsh/blob/master/plugins/git/git.plugin.zsh)
 # Not a submodule since it's one file out of a large monorepo -
 # update by re-fetching that URL and diffing.
-# Only dependency outside this file: gbcopy() calls clipcopy, provided
-# by full.zsh as a thin wrapper around scopy.
 
 # Git version checking
 autoload -Uz is-at-least
@@ -54,16 +52,6 @@ function git_main_branch() {
   # If no main branch was found, fall back to master but return error
   echo master
   return 1
-}
-
-function gbcopy() {
-  command git rev-parse --git-dir &>/dev/null || return
-
-  local branch
-  branch="$(git_current_branch)" || return
-  [[ -n "$branch" ]] || return 1
-
-  print -rn -- "$branch" | clipcopy
 }
 
 function grename() {

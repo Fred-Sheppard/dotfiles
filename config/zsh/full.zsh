@@ -119,10 +119,7 @@ dcdown() {
 
 # ============================================
 # GIT FUNCTIONS
-# (the omz git plugin loads first so our own git-* functions/aliases
-# below can override any of its aliases we redefine, e.g. gb)
 # ============================================
-clipcopy() { scopy "$@"; }
 source "$ZSH_DIR/vendor/omz-git/git.plugin.zsh"
 
 git-switch() {
