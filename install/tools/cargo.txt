@@ -1,0 +1,19 @@
+# Tools installed with cargo-binstall, unless the command is already on PATH
+# (e.g. installed via brew or pacman), in which case we leave it alone.
+#
+# Columns: crate  command
+
+bat              bat
+bob-nvim         bob
+cargo-update     cargo-install-update
+du-dust          dust
+eza              eza
+fd-find          fd
+gitui            gitui
+ripgrep          rg
+starship         starship
+tealdeer         tldr
+trashy           trash
+tree-sitter-cli  tree-sitter
+yazi-fm          yazi
+zoxide           zoxide

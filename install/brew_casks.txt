@@ -1,5 +1,4 @@
 alacritty
-bob
 bitwarden
 bluesnooze
 firefox
@@ -12,4 +11,3 @@ rectangle
 shottr
 spotify
 stats
-tree-sitter-cli

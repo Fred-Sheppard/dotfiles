@@ -18,6 +18,12 @@ bash install.sh
 
 This links `~/.zshrc` to `config/zsh/full.zsh`.
 
+On Linux, update your system packages before running. Ubuntu/Debian is
+handled automatically (`apt-get update && apt-get upgrade`); on other
+distros the script skips package installation and only checks that
+`curl fzf gcc git make perl unzip zsh` (plus `ca-certificates`) are
+already installed, so install them with your package manager first.
+
 Machine-specific extras (e.g. a work WSL box's internal tools) live in
 `config/zsh/devices/<name>.zsh`, tracked in this repo. A device opts in
 by symlinking itself - full.zsh sources `~/.zshrc.local` last, if present:
