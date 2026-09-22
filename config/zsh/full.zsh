@@ -1,46 +1,69 @@
-export ZSH="$HOME/.oh-my-zsh"
-ZSH_THEME="robbyrussell"
+# Long-term devices: macOS, WSL, Linux, devcontainers.
+# OS differences are a handful of one-liners below, not separate files —
+# if a machine needs more than a line or two, fix the machine, not this file.
 
-# ============================================
-# OH-MY-ZSH OPTIMIZATIONS
-# ============================================
+ZSH_DIR="${${(%):-%x}:A:h}"
 
-plugins=(git zsh-vi-mode rust zsh-autosuggestions zsh-syntax-highlighting safe-paste zsh-history-substring-search)
+NVM_DIR="$HOME/.nvm"
+NVM_SCRIPT=""
+NVM_COMPLETION=""
 
-source $ZSH/oh-my-zsh.sh
+case "$(uname)" in
+Darwin)
+  alias battery="pmset -g batt"
+  NVM_SCRIPT="/opt/homebrew/opt/nvm/nvm.sh"
+  NVM_COMPLETION="/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+  ;;
+Linux)
+  if grep -qi microsoft /proc/version 2>/dev/null; then
+    alias open="explorer.exe"
+    alias copy="clip.exe"
+    path=("/mnt/c/Users/frederick.sheppard/scoop/shims" $path)
+  else
+    alias rm="trash-put"
+    alias battery="acpi"
+  fi
+  NVM_SCRIPT="/usr/share/nvm/init-nvm.sh"
+  ;;
+esac
 
-# ============================================
-# PATH & FPATH
-# ============================================
-path=(~/bin ~/.cargo/bin /home/fred/.local/share/bob/nvim-bin $path)
+# Docker Desktop CLI completions + nvm's default-node bin dir must be on
+# fpath/path *before* compinit runs (inside common.zsh), so this file
+# sources common.zsh itself rather than being sourced by it.
+fpath=("$HOME/.docker/completions" $fpath)
+if [ -d "$NVM_DIR/versions/node" ]; then
+  NODE_VERSION_DIR="$NVM_DIR/versions/node"
+  if [ -f "$NVM_DIR/alias/default" ]; then
+    DEFAULT_NODE=$(cat "$NVM_DIR/alias/default")
+  else
+    DEFAULT_NODE=$(command ls -1 "$NODE_VERSION_DIR" | sort -V | tail -n 1)
+  fi
+  path=("$NODE_VERSION_DIR/$DEFAULT_NODE/bin" $path)
+fi
+
+path=(~/bin ~/.cargo/bin $path)
 fpath=(~/.completions $fpath)
 
-# ============================================
-# ZSH-VI-MODE CONFIG
-# ============================================
-source $ZSH_CUSTOM/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
-# Disable highlighting
-HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=''
-HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND=''
-# Compress all identical instructions into one
-HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1
-# `ls` matches `ls -l` but not `echo 'ls'`
-HISTORY_SUBSTRING_SEARCH_PREFIXED=1
+source "$ZSH_DIR/common.zsh"
 
-bindkey -a 'k' history-substring-search-up
-bindkey -a 'j' history-substring-search-down
-bindkey '^[[A' history-substring-search-up
-bindkey '^[[B' history-substring-search-down
-
-bindkey -M viins '\e.' insert-last-word
-bindkey -M vicmd H beginning-of-line
-bindkey -M vicmd L end-of-line
+# ============================================
+# LAZY-LOADED NVM
+# ============================================
+for zb_cmd in nvm node npm npx; do
+  eval "
+  $zb_cmd() {
+    unset -f nvm node npm npx
+    [ -s \"\$NVM_SCRIPT\" ] && \\. \"\$NVM_SCRIPT\"
+    [ -n \"\$NVM_COMPLETION\" ] && [ -s \"\$NVM_COMPLETION\" ] && \\. \"\$NVM_COMPLETION\"
+    $zb_cmd \"\$@\"
+  }
+  "
+done
+unset zb_cmd
 
 # ============================================
 # EXPORTS
 # ============================================
-export EDITOR=nvim
-export VISUAL=$EDITOR
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 export BAT_THEME="Catppuccin Mocha"
 export HOMEBREW_NO_ENV_HINTS="true"
@@ -48,7 +71,6 @@ export HOMEBREW_NO_ENV_HINTS="true"
 # ============================================
 # ALIASES
 # ============================================
-# Coloured help pages
 alias -g -- -h='-h 2>&1 | bat --language=help --style=plain --paging=never'
 alias -g -- --help='--help 2>&1 | bat --language=help --style=plain --paging=never'
 alias zrc='nvim ~/.zshrc'
@@ -57,6 +79,7 @@ alias ls="eza"
 alias mkvenv="python3 -m venv .venv"
 alias vv="source .venv/bin/activate"
 alias zz="exec zsh"
+alias tl="tldr-less"
 
 # ============================================
 # FUNCTIONS
@@ -68,51 +91,47 @@ tldr-less() {
   fi
   tldr "$1" --color=always | bat --paging=always --style=plain
 }
-alias tl="tldr-less"
 
-# yazi
-function y() {
-	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
-	yazi "$@" --cwd-file="$tmp"
-	if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-		builtin cd -- "$cwd"
-	fi
-	rm -f -- "$tmp"
+y() {
+  local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+  yazi "$@" --cwd-file="$tmp"
+  if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+    builtin cd -- "$cwd"
+  fi
+  rm -f -- "$tmp"
 }
 
-function dcup() {
+dcup() {
   if [ $# -eq 0 ]; then
     echo "Usage: dcup <file>"
     return 1
   fi
-  docker-compose -f $1 up -d
+  docker-compose -f "$1" up -d
 }
 
-function dcdown() {
+dcdown() {
   if [ $# -eq 0 ]; then
     echo "Usage: dcdown <file>"
     return 1
   fi
-  docker-compose -f $1 down
+  docker-compose -f "$1" down
 }
 
+# ============================================
 # GIT FUNCTIONS
+# ============================================
 git-switch() {
   local current=$(git branch --show-current)
-  
   if [[ "$current" == */dev ]]; then
-    local push_branch="${current%/dev}/push"
-    git switch -C "$push_branch"
+    git switch -C "${current%/dev}/push"
   elif [[ "$current" == */push ]]; then
-    local dev_branch="${current%/push}/dev"
-    git switch "$dev_branch"
+    git switch "${current%/push}/dev"
   else
     echo "Error: current branch '$current' must end with /dev or /push" >&2
     return 1
   fi
 }
 
-# Push and switch back to dev branch
 git-dopush() {
   local current=$(git branch --show-current)
   if [[ "$current" != */push ]]; then
@@ -129,27 +148,27 @@ git-dopush() {
 }
 
 _git_rebase_check_empty() {
-  git rebase -i "$@" 2>/tmp/git-rebase-err
+  local errfile=$(mktemp)
+  git rebase -i "$@" 2>"$errfile"
   local exit_code=$?
-
-  # Use /bin/cat instead of bat
-  /bin/cat /tmp/git-rebase-err >&2
-
-  if [[ $exit_code -ne 0 ]] && grep -q "nothing to do" /tmp/git-rebase-err; then
-    return 2
-  fi
-
+  /bin/cat "$errfile" >&2
+  local is_empty=0
+  grep -q "nothing to do" "$errfile" && is_empty=1
+  rm -f "$errfile"
+  [[ $exit_code -ne 0 && $is_empty -eq 1 ]] && return 2
   return $exit_code
 }
 
-# Full pipeline: switch → rebase → dopush
 git-ship() {
   local current=$(git branch --show-current)
   local push=0
   for arg in "$@"; do
     case "$arg" in
-      --push) push=1 ;;
-      *) echo "Unknown argument: $arg" >&2; return 1 ;;
+    --push) push=1 ;;
+    *)
+      echo "Unknown argument: $arg" >&2
+      return 1
+      ;;
     esac
   done
   if [[ "$current" != */dev ]]; then
@@ -170,60 +189,48 @@ git-ship() {
     return $rebase_exit
   fi
 
-  if [[ $push -eq 1 ]]; then
-    git-dopush
-  fi
+  [[ $push -eq 1 ]] && git-dopush
 }
 
-function recent_branches() {
-  git reflog --pretty='%gs' \
-    | grep -E 'checkout: moving from|branch: Created from' \
-    | awk '
+recent_branches() {
+  git reflog --pretty='%gs' |
+    grep -E 'checkout: moving from|branch: Created from' |
+    awk '
         /checkout: moving from/ { print $NF }
         /branch: Created from/ { print $1 }
-      ' \
-    | awk '!seen[$0]++'
+      ' |
+    awk '!seen[$0]++'
 }
 alias gb=recent_branches
 
-function checkout_recent_branch() {
+checkout_recent_branch() {
   local branch
   branch=$(recent_branches | fzf --no-multi --prompt="Recent branches: ") || return
   git checkout "$branch"
 }
 alias gbb=checkout_recent_branch
 
-scopy() {
-  # Read input (argument or stdin)
-  if [ -t 0 ]; then
-    data="$*"
-  else
-    data="$(cat)"
-  fi
-
-  # Base64 encode (no line wrapping)
-  b64=$(printf "%s" "$data" | base64 | tr -d '\n')
-
-  # Send OSC 52 escape sequence
-  printf "\033]52;c;%s\a" "$b64"
-}
-
 # ============================================
-# ZELLIJ FUNCTIONS
+# ZELLIJ
 # ============================================
-function zr () { zellij run --name "$*" -- zsh -ic "$*";}
-function zrf () { zellij run --name "$*" --floating -- zsh -ic "$*";}
-function zri () { zellij run --name "$*" --in-place -- zsh -ic "$*";}
-function ze () { zellij edit "$*";}
-function zef () { zellij edit --floating "$*";}
-function zei () { zellij edit --in-place "$*";}
-function zpipe () {
+zr() { zellij run --name "$*" -- zsh -ic "$*"; }
+zrf() { zellij run --name "$*" --floating -- zsh -ic "$*"; }
+zri() { zellij run --name "$*" --in-place -- zsh -ic "$*"; }
+ze() { zellij edit "$*"; }
+zef() { zellij edit --floating "$*"; }
+zei() { zellij edit --in-place "$*"; }
+zpipe() {
   if [ -z "$1" ]; then
-    zellij pipe;
+    zellij pipe
   else
-    zellij pipe -p $1;
+    zellij pipe -p "$1"
   fi
 }
+
+if [[ -z "$VSCODE_INJECTION" && "$TERM_PROGRAM" != "vscode" &&
+  "$TERMINAL_EMULATOR" != "JetBrains-JediTerm" && -z "$INTELLIJ_ENVIRONMENT_READER" ]]; then
+  rellij
+fi
 
 # ============================================
 # TOOL INITIALIZATIONS
@@ -233,5 +240,3 @@ eval "$(zoxide init zsh --cmd cd)"
 if [[ "$TERM_PROGRAM" != "vscode" ]]; then
   eval "$(starship init zsh)"
 fi
-
-[ -f ~/.zshrc-device ] && source ~/.zshrc-device

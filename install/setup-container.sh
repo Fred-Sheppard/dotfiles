@@ -26,14 +26,12 @@ LOCATION="${INPUT#*:}"
 [[ -z "$CONTAINER_ID" ]] && die "Container ID is empty"
 [[ -z "$LOCATION" ]] && die "Location is empty"
 
-# ── Validate source files exist ────────────────────────────────────────────────
-SETUP_SCRIPT="./install/setup-zsh.sh"
-CONTAINER_ZSH="./config/zsh/device/container.zsh"
-BASE_ZSH="./config/zsh/base.zsh"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ZSH_SRC="$REPO_ROOT/config/zsh"
 
-[[ -f "$SETUP_SCRIPT" ]] || die "Missing: $SETUP_SCRIPT"
-[[ -f "$CONTAINER_ZSH" ]] || die "Missing: $CONTAINER_ZSH"
-[[ -f "$BASE_ZSH" ]] || die "Missing: $BASE_ZSH"
+[[ -f "$ZSH_SRC/common.zsh" ]] || die "Missing: $ZSH_SRC/common.zsh"
+[[ -f "$ZSH_SRC/minimal.zsh" ]] || die "Missing: $ZSH_SRC/minimal.zsh"
+[[ -d "$ZSH_SRC/vendor/zsh-vi-mode" ]] || die "Vendored plugins missing — run: git submodule update --init $ZSH_SRC/vendor"
 
 # ── Verify container is running ────────────────────────────────────────────────
 log "Verifying container $CONTAINER_ID is running"
@@ -41,26 +39,23 @@ docker inspect --format '{{.State.Running}}' "$CONTAINER_ID" 2>/dev/null |
   grep -q 'true' || die "Container '$CONTAINER_ID' is not running"
 ok "Container is running"
 
-# ── Copy and run setup script ──────────────────────────────────────────────────
-log "Copying setup-zsh.sh to $CONTAINER_ID:$LOCATION"
-docker cp "$SETUP_SCRIPT" "$CONTAINER_ID:$LOCATION/setup-zsh.sh" ||
-  die "Failed to copy setup-zsh.sh"
-ok "Copied setup-zsh.sh"
+# ── Install zsh ────────────────────────────────────────────────────────────────
+log "Installing zsh in container"
+docker exec "$CONTAINER_ID" sh -c \
+  'command -v zsh >/dev/null 2>&1 || (apt-get update && apt-get install -y zsh)' ||
+  die "Failed to install zsh"
+ok "zsh installed"
 
-log "Running setup-zsh.sh inside container"
-docker exec "$CONTAINER_ID" bash "$LOCATION/setup-zsh.sh" ||
-  die "setup-zsh.sh failed"
-ok "setup-zsh.sh completed"
+# ── Copy config ─────────────────────────────────────────────────────────────────
+log "Copying config/zsh to $CONTAINER_ID:$LOCATION/.config/zsh"
+docker exec "$CONTAINER_ID" mkdir -p "$LOCATION/.config/zsh"
+docker cp "$ZSH_SRC/." "$CONTAINER_ID:$LOCATION/.config/zsh" ||
+  die "Failed to copy config/zsh"
+ok "Copied config/zsh"
 
-# ── Copy config files ──────────────────────────────────────────────────────────
-log "Copying container.sh to $CONTAINER_ID:$LOCATION/.zshrc"
-docker cp "$CONTAINER_ZSH" "$CONTAINER_ID:$LOCATION/.zshrc" ||
-  die "Failed to copy container.sh as .zshrc"
-ok "Copied .zshrc"
+log "Linking $LOCATION/.zshrc -> minimal.zsh"
+docker exec "$CONTAINER_ID" ln -sfn "$LOCATION/.config/zsh/minimal.zsh" "$LOCATION/.zshrc" ||
+  die "Failed to link .zshrc"
+ok "Linked .zshrc"
 
-log "Copying base.sh to $CONTAINER_ID:$LOCATION/base.sh"
-docker cp "$BASE_ZSH" "$CONTAINER_ID:$LOCATION/base.sh" ||
-  die "Failed to copy base.sh"
-ok "Copied base.sh"
-
-ok "All done — zsh configured in $CONTAINER_ID:$LOCATION"
+ok "All done — zsh configured in $CONTAINER_ID:$LOCATION. Run: docker exec -it $CONTAINER_ID zsh"
