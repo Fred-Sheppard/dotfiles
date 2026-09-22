@@ -5,6 +5,22 @@
 ZSH_DIR="${${(%):-%x}:A:h}"
 
 # ============================================
+# TERMINAL COLOR
+# (docker exec -t hardcodes TERM=xterm regardless of the host terminal;
+# xterm's terminfo only declares 8 colors, so zsh silently drops colors
+# above that range instead of erroring - e.g. autosuggestions' grey text
+# renders as unstyled default text. Upgrade only known 8-color TERMs, and
+# only if the 256-color terminfo entry actually exists.)
+# ============================================
+case "$TERM" in
+xterm | screen | tmux)
+  if infocmp "${TERM}-256color" >/dev/null 2>&1; then
+    export TERM="${TERM}-256color"
+  fi
+  ;;
+esac
+
+# ============================================
 # HISTORY
 # ============================================
 HISTFILE=~/.zsh_history
@@ -58,7 +74,10 @@ source "$ZSH_DIR/vendor/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 # ============================================
 # EXPORTS
 # ============================================
-export EDITOR=nvim
+for zb_editor in nvim vim vi; do
+  command -v $zb_editor >/dev/null 2>&1 && export EDITOR=$zb_editor && break
+done
+unset zb_editor
 export VISUAL=$EDITOR
 
 # ============================================
