@@ -18,8 +18,13 @@ bash install.sh
 
 This links `~/.zshrc` to `config/zsh/full.zsh`.
 
-Machine-specific extras (e.g. a work WSL box's internal tools) go in an
-untracked `~/.zshrc.local` - sourced last, if present.
+Machine-specific extras (e.g. a work WSL box's internal tools) live in
+`config/zsh/devices/<name>.zsh`, tracked in this repo. A device opts in
+by symlinking itself - full.zsh sources `~/.zshrc.local` last, if present:
+
+```bash
+ln -sfn ~/dotfiles/config/zsh/devices/<name>.zsh ~/.zshrc.local
+```
 
 ## Short-lived containers
 

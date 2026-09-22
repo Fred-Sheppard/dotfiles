@@ -18,7 +18,6 @@ Linux)
   if grep -qi microsoft /proc/version 2>/dev/null; then
     alias open="explorer.exe"
     alias copy="clip.exe"
-    # path=("/mnt/c/Users/frederick.sheppard/scoop/shims" $path)
   else
     alias rm="trash-put"
     alias battery="acpi"
@@ -244,10 +243,12 @@ if [[ -z "$VSCODE_INJECTION" && "$TERM_PROGRAM" != "vscode" &&
 fi
 
 # ============================================
-# LOCAL OVERRIDES
-# (untracked, one file, sourced last - e.g. a work WSL box's internal
-# tool paths/aliases. Not synced by this repo; not extensible beyond
-# "one file per machine".)
+# DEVICE OVERRIDES
+# (sourced last, if present. Tracked in config/zsh/devices/ - one file
+# per machine, e.g. a work WSL box's internal tool paths. A device opts
+# in by symlinking itself:
+#   ln -sfn ~/dotfiles/config/zsh/devices/<name>.zsh ~/.zshrc.local
+# No auto-detection, no naming scheme beyond that.)
 # ============================================
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
 
