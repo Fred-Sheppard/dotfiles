@@ -8,12 +8,37 @@ fail() {
 }
 command_exists() { command -v "$1" >/dev/null 2>&1; }
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+OS="$(uname)"
+
 #######################################
 # System packages
 #######################################
-sudo apt-get update
-sudo apt-get upgrade -y
-sudo apt-get install -y $(xargs <apt-requirements.txt)
+case "$OS" in
+Darwin)
+  if ! command_exists brew; then
+    if [[ -x /opt/homebrew/bin/brew ]]; then
+      eval "$(/opt/homebrew/bin/brew shellenv)"
+    elif [[ -x /usr/local/bin/brew ]]; then
+      eval "$(/usr/local/bin/brew shellenv)"
+    else
+      fail "Homebrew not found. Install it first: https://brew.sh"
+    fi
+  fi
+  log "Updating Homebrew"
+  brew update
+  log "Installing bootstrap packages via Homebrew"
+  brew install fzf cargo-binstall
+  ;;
+Linux)
+  sudo apt-get update
+  sudo apt-get upgrade -y
+  sudo apt-get install -y fzf gcc zsh
+  ;;
+*)
+  fail "Unsupported OS: $OS"
+  ;;
+esac
 
 #######################################
 # Rust (rustup)
@@ -34,15 +59,22 @@ command_exists cargo || fail "Rust installation failed"
 # cargo-binstall
 #######################################
 if ! command_exists cargo-binstall; then
-  log "Installing cargo-binstall"
-  curl -L --proto '=https' --tlsv1.2 -sSf \
-    https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh |
-    bash
+  case "$OS" in
+  Darwin)
+    fail "cargo-binstall not found after Homebrew install"
+    ;;
+  Linux)
+    log "Installing cargo-binstall"
+    curl -L --proto '=https' --tlsv1.2 -sSf \
+      https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh |
+      bash
+    ;;
+  esac
 fi
 
 command_exists cargo-binstall || fail "cargo-binstall not found"
 
-cargo-binstall --no-confirm $(xargs <cargo-requirements.txt)
+cargo-binstall --no-confirm $(xargs <"$SCRIPT_DIR/tools/cargo.txt")
 
 #######################################
 # Neovim (bob)
@@ -66,7 +98,7 @@ ln -sfn "$HOME/dotfiles/config/starship.toml" \
 if command_exists bat; then
   BAT_CONFIG_DIR="$(bat --config-dir)"
   mkdir -p "$BAT_CONFIG_DIR/themes"
-  wget -q -O "$BAT_CONFIG_DIR/themes/Catppuccin Mocha.tmTheme" \
+  curl -fsSL -o "$BAT_CONFIG_DIR/themes/Catppuccin Mocha.tmTheme" \
     https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Mocha.tmTheme
   bat cache --build
   grep -q Catppuccin "$BAT_CONFIG_DIR/config" 2>/dev/null ||
@@ -74,7 +106,10 @@ if command_exists bat; then
 fi
 
 log "Pulling zellij fork"
-bash ./pull-zellij-fork.sh
+case "$OS" in
+Darwin) bash "$SCRIPT_DIR/pull-zellij-fork.sh" --macos ;;
+Linux) bash "$SCRIPT_DIR/pull-zellij-fork.sh" --x86 ;;
+esac
 
 #######################################
 # Zsh plugins (vendored as submodules)
@@ -95,11 +130,22 @@ nvm install --lts
 nvm use --lts
 
 #######################################
+# GUI apps (Homebrew Cask)
+#######################################
+if [[ "$OS" == "Darwin" ]]; then
+  log "Installing GUI apps via Homebrew Cask"
+  # Errors if an app already exists at /Applications/*.app via a non-Homebrew
+  # install - fix manually with `brew install --cask --force <name>` or by
+  # removing the existing app, rather than scripting around it here.
+  brew install --cask $(xargs <"$SCRIPT_DIR/brew_casks.txt")
+fi
+
+#######################################
 # win32yank (WSL)
 #######################################
-if grep -qi microsoft /proc/version && ! command_exists win32yank.exe; then
+if [[ "$OS" == "Linux" ]] && grep -qi microsoft /proc/version && ! command_exists win32yank.exe; then
   TMP="$(mktemp -d)"
-  wget -q -O "$TMP/win32yank.zip" \
+  curl -fsSL -o "$TMP/win32yank.zip" \
     https://github.com/equalsraf/win32yank/releases/latest/download/win32yank-x64.zip
   unzip -q "$TMP/win32yank.zip" -d "$TMP"
   sudo mv "$TMP/win32yank.exe" /usr/local/bin/

@@ -75,7 +75,7 @@ BIN_DIR="$HOME/.cargo/bin"
 mkdir -p "$BIN_DIR"
 
 log "Pulling $URL..."
-wget -q -P "$BIN_DIR" "$URL" || fail "Download failed"
+curl -fsSL -o "$BIN_DIR/$FILENAME" "$URL" || fail "Download failed"
 
 FILE="$BIN_DIR/$FILENAME"
 chmod +x "$FILE"

@@ -7,7 +7,8 @@ fd-find
 gitui
 ripgrep
 starship
-trashy
 tealdeer
+trashy
+tree-sitter-cli
 yazi-fm
 zoxide
