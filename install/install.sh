@@ -38,7 +38,7 @@ Darwin)
 Linux)
   $SUDO apt-get update
   $SUDO apt-get upgrade -y
-  $SUDO apt-get install -y fzf gcc make perl zsh
+  $SUDO apt-get install -y ca-certificates curl fzf gcc git make perl unzip zsh
   ;;
 *)
   fail "Unsupported OS: $OS"
