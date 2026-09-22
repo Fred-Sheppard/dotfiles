@@ -237,18 +237,31 @@ if [[ "$TERM_PROGRAM" != "vscode" ]]; then
   eval "$(starship init zsh)"
 fi
 
-if [[ -z "$VSCODE_INJECTION" && "$TERM_PROGRAM" != "vscode" &&
-  "$TERMINAL_EMULATOR" != "JetBrains-JediTerm" && -z "$INTELLIJ_ENVIRONMENT_READER" ]]; then
-  rellij
-fi
-
 # ============================================
 # DEVICE OVERRIDES
-# (sourced last, if present. Tracked in config/zsh/devices/ - one file
-# per machine, e.g. a work WSL box's internal tool paths. A device opts
-# in by symlinking itself:
+# (sourced before ZELLIJ AUTO-ATTACH below, so a device can redefine
+# rellij() itself - e.g. a machine without the rellij-compatible zellij
+# fork can swap in plain `zellij attach` or `zellij setup
+# --generate-auto-start`. Tracked in config/zsh/devices/ - one file per
+# machine. A device opts in by symlinking itself:
 #   ln -sfn ~/dotfiles/config/zsh/devices/<name>.zsh ~/.zshrc.local
 # No auto-detection, no naming scheme beyond that.)
 # ============================================
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
+
+# ============================================
+# ZELLIJ AUTO-ATTACH
+# (rellij takes over the terminal: it either attaches to an existing
+# session, or exits leaving no session started - it never creates one.
+# Either way it's a foreground command, not a hook, so it must run last,
+# after everything above that a returned-to (or never-attached) shell
+# needs already works - prompt, vi-mode, path. Guarded against
+# non-interactive sourcing (e.g. a tool probing .zshrc for env vars)
+# and IDE-embedded terminals, where taking over stdin would hang or
+# fight the IDE's own terminal integration.)
+# ============================================
+if [[ -o interactive && -z "$VSCODE_INJECTION" && "$TERM_PROGRAM" != "vscode" &&
+  "$TERMINAL_EMULATOR" != "JetBrains-JediTerm" && -z "$INTELLIJ_ENVIRONMENT_READER" ]]; then
+  rellij
+fi
 
