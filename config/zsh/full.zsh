@@ -1,6 +1,4 @@
 # Long-term devices: macOS, WSL, Linux, devcontainers.
-# OS differences are a handful of one-liners below, not separate files —
-# if a machine needs more than a line or two, fix the machine, not this file.
 
 ZSH_DIR="${${(%):-%x}:A:h}"
 
@@ -239,26 +237,12 @@ fi
 
 # ============================================
 # DEVICE OVERRIDES
-# (sourced before ZELLIJ AUTO-ATTACH below, so a device can redefine
-# rellij() itself - e.g. a machine without the rellij-compatible zellij
-# fork can swap in plain `zellij attach` or `zellij setup
-# --generate-auto-start`. Tracked in config/zsh/devices/ - one file per
-# machine. A device opts in by symlinking itself:
-#   ln -sfn ~/dotfiles/config/zsh/devices/<name>.zsh ~/.zshrc.local
-# No auto-detection, no naming scheme beyond that.)
+# Devices can redefine rellij() to avoid calling it
 # ============================================
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
 
 # ============================================
 # ZELLIJ AUTO-ATTACH
-# (rellij takes over the terminal: it either attaches to an existing
-# session, or exits leaving no session started - it never creates one.
-# Either way it's a foreground command, not a hook, so it must run last,
-# after everything above that a returned-to (or never-attached) shell
-# needs already works - prompt, vi-mode, path. Guarded against
-# non-interactive sourcing (e.g. a tool probing .zshrc for env vars)
-# and IDE-embedded terminals, where taking over stdin would hang or
-# fight the IDE's own terminal integration.)
 # ============================================
 if [[ -o interactive && -z "$VSCODE_INJECTION" && "$TERM_PROGRAM" != "vscode" &&
   "$TERMINAL_EMULATOR" != "JetBrains-JediTerm" && -z "$INTELLIJ_ENVIRONMENT_READER" ]]; then

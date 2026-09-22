@@ -1,8 +1,5 @@
 # Short-lived containers. Deliberately short — anything added here must
-# justify itself for a shell that may live minutes. No starship, zoxide,
-# nvm, zellij, docker-compose helpers, or git workflow functions: those
-# belong in full.zsh for long-term devices.
-
+# justify itself for a shell that may live minutes.
 ZSH_DIR="${${(%):-%x}:A:h}"
 
 path=(~/bin $path)
@@ -11,9 +8,7 @@ source "$ZSH_DIR/common.zsh"
 
 # ============================================
 # PROMPT
-# (no starship binary here - a small starship-lookalike, pure zsh.
-# No git info: this is a throwaway container shell, not a repo you're
-# tracking state in. Just truncated path, exit-status arrow, time.)
+# Red/green arrow, time on right
 # ============================================
 setopt PROMPT_SUBST
 
