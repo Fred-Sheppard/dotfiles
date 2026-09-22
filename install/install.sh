@@ -52,12 +52,12 @@ bob use stable
 #######################################
 # Dotfiles
 #######################################
-ln -sfn "$HOME/dotfiles/.zshrc" "$HOME/.zshrc"
+ln -sfn "$HOME/dotfiles/config/zsh/full.zsh" "$HOME/.zshrc"
 mkdir -p "$HOME/.config/zellij/layouts"
 mkdir -p "$HOME/.local/share/zellij"
-ln -sfn "$HOME/dotfiles/status.kdl" \
+ln -sfn "$HOME/dotfiles/config/zellij/layouts/status.kdl" \
   "$HOME/.config/zellij/layouts/default.kdl"
-ln -sfn "$HOME/dotfiles/starship.toml" \
+ln -sfn "$HOME/dotfiles/config/starship.toml" \
   "$HOME/.config/starship.toml"
 
 #######################################
@@ -77,22 +77,10 @@ log "Pulling zellij fork"
 bash ./pull-zellij-fork.sh
 
 #######################################
-# Oh My Zsh
+# Zsh plugins (vendored as submodules)
 #######################################
-if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
-  RUNZSH=no CHSH=no sh -c \
-    "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-fi
-
-ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
-git clone https://github.com/jeffreytse/zsh-vi-mode \
-  "$ZSH_CUSTOM/plugins/zsh-vi-mode" 2>/dev/null || true
-git clone https://github.com/zsh-users/zsh-autosuggestions \
-  "$ZSH_CUSTOM/plugins/zsh-autosuggestions" 2>/dev/null || true
-git clone https://github.com/zsh-users/zsh-syntax-highlighting \
-  "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" 2>/dev/null || true
-git clone https://github.com/zsh-users/zsh-history-substring-search.git \
-  "$ZSH_CUSTOM/plugins/zsh-history-substring-search"
+log "Fetching vendored zsh plugins"
+git -C "$HOME/dotfiles" submodule update --init --recursive config/zsh/vendor
 
 #######################################
 # NVM + Node (LTS)
