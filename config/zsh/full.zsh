@@ -38,7 +38,7 @@ if [ -d "$NVM_DIR/versions/node" ]; then
   path=("$NODE_VERSION_DIR/$DEFAULT_NODE/bin" $path)
 fi
 
-path=(~/bin ~/.cargo/bin $path)
+path=(~/bin ~/.cargo/bin ~/.local/share/bob/nvim-bin $path)
 fpath=(~/.completions $fpath)
 
 source "$ZSH_DIR/common.zsh"
