@@ -243,3 +243,11 @@ if [[ -z "$VSCODE_INJECTION" && "$TERM_PROGRAM" != "vscode" &&
   rellij
 fi
 
+# ============================================
+# LOCAL OVERRIDES
+# (untracked, one file, sourced last - e.g. a work WSL box's internal
+# tool paths/aliases. Not synced by this repo; not extensible beyond
+# "one file per machine".)
+# ============================================
+[ -f ~/.zshrc.local ] && source ~/.zshrc.local
+

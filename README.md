@@ -18,6 +18,9 @@ bash install.sh
 
 This links `~/.zshrc` to `config/zsh/full.zsh`.
 
+Machine-specific extras (e.g. a work WSL box's internal tools) go in an
+untracked `~/.zshrc.local` - sourced last, if present.
+
 ## Short-lived containers
 
 From the host, against a running container:
