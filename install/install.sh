@@ -9,6 +9,21 @@ fail() {
 }
 command_exists() { command -v "$1" >/dev/null 2>&1; }
 
+# Symlink $1 (in this repo) to $2. Anything already at $2 that isn't a symlink
+# is moved aside rather than clobbered - app-managed configs live in these
+# locations too, and a machine may have one worth keeping.
+link() {
+  local src="$HOME/dotfiles/$1" dest="$2"
+  [[ -e "$src" ]] || fail "Missing dotfile: $src"
+  mkdir -p "$(dirname "$dest")"
+  if [[ -e "$dest" && ! -L "$dest" ]]; then
+    local backup="$dest.bak.$(date +%Y%m%d%H%M%S)"
+    warn "Backing up existing $dest -> $backup"
+    mv "$dest" "$backup"
+  fi
+  ln -sfn "$src" "$dest"
+}
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OS="$(uname)"
 
@@ -131,32 +146,37 @@ fi
 log "Installing Neovim (stable) via bob"
 # zshrc already puts ~/.local/share/bob/nvim-bin on $PATH, so tell bob not to
 # prompt about doing it itself (the prompt blocks non-interactive installs).
-mkdir -p "$HOME/.config/bob"
-ln -sfn "$HOME/dotfiles/config/bob/config.json" "$HOME/.config/bob/config.json"
+link config/bob/config.json "$HOME/.config/bob/config.json"
 bob use stable
 
 #######################################
 # Dotfiles
 #######################################
-ln -sfn "$HOME/dotfiles/config/zsh/full.zsh" "$HOME/.zshrc"
-mkdir -p "$HOME/.config/zellij/layouts"
+log "Linking dotfiles"
+link config/zsh/full.zsh "$HOME/.zshrc"
+link config/git/.gitconfig "$HOME/.gitconfig"
+link config/git/.gitignore_global "$HOME/.gitignore_global"
+link config/starship.toml "$HOME/.config/starship.toml"
+link config/nvim "$HOME/.config/nvim"
+link config/yazi "$HOME/.config/yazi"
+link config/gitui "$HOME/.config/gitui"
+link config/bat "$HOME/.config/bat"
+link config/alacritty "$HOME/.config/alacritty"
+link config/zellij/config.kdl "$HOME/.config/zellij/config.kdl"
+link config/zellij/layouts/status.kdl "$HOME/.config/zellij/layouts/default.kdl"
 mkdir -p "$HOME/.local/share/zellij"
-ln -sfn "$HOME/dotfiles/config/zellij/layouts/status.kdl" \
-  "$HOME/.config/zellij/layouts/default.kdl"
-ln -sfn "$HOME/dotfiles/config/starship.toml" \
-  "$HOME/.config/starship.toml"
+link config/.ideavimrc "$HOME/.ideavimrc"
+link config/vscode/.vscodevimrc "$HOME/.vscodevimrc"
+link config/vscode/settings.json \
+  "$HOME/Library/Application Support/Code/User/settings.json"
 
 #######################################
 # Bat theme
 #######################################
+# The theme and `--theme=` line ship in config/bat; bat only needs to be told
+# to rebuild its cache so the .tmTheme is picked up.
 if command_exists bat; then
-  BAT_CONFIG_DIR="$(bat --config-dir)"
-  mkdir -p "$BAT_CONFIG_DIR/themes"
-  curl -fsSL -o "$BAT_CONFIG_DIR/themes/Catppuccin Mocha.tmTheme" \
-    https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Mocha.tmTheme
   bat cache --build
-  grep -q Catppuccin "$BAT_CONFIG_DIR/config" 2>/dev/null ||
-    echo '--theme="Catppuccin Mocha"' >>"$BAT_CONFIG_DIR/config"
 fi
 
 log "Pulling zellij fork"
