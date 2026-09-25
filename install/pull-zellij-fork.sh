@@ -19,41 +19,14 @@ matched against this machine's OS and architecture. A new platform added to
 the fork's releases is picked up here with no change to this script.
 
 Options:
-  --os OS     Override the detected OS (linux, macos)
-  --arch A    Override the detected architecture (x86_64, aarch64, ...)
-  --x86       Alias for --os linux --arch x86_64
-  --macos     Alias for --os macos --arch aarch64
   -h, --help  Show this help message and exit
 
 EOF
 }
 
-OS=""
-ARCH=""
-
 # Parse args
 while [ $# -gt 0 ]; do
   case "$1" in
-  --os)
-    [ $# -ge 2 ] || fail "--os needs a value. Use --help for usage."
-    OS="$2"
-    shift 2
-    ;;
-  --arch)
-    [ $# -ge 2 ] || fail "--arch needs a value. Use --help for usage."
-    ARCH="$2"
-    shift 2
-    ;;
-  --x86)
-    OS="linux"
-    ARCH="x86_64"
-    shift
-    ;;
-  --macos)
-    OS="macos"
-    ARCH="aarch64"
-    shift
-    ;;
   -h | --help)
     usage
     exit 0
@@ -64,23 +37,23 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-[ -n "$OS" ] || OS="$(uname -s)"
-[ -n "$ARCH" ] || ARCH="$(uname -m)"
+OS="$(uname -s)"
+ARCH="$(uname -m)"
 
 # Asset names are matched on these tokens rather than on a hardcoded list of
 # platforms, so a release that starts shipping, say, aarch64-linux just works.
 # Each case lists the spellings a build might use for the same thing; anything
 # unrecognised falls through to its own name, which is usually right.
 case "$OS" in
-Linux | linux) OS_RE='linux' ;;
-Darwin | darwin | macos) OS_RE='macos|darwin|apple' ;;
+Linux) OS_RE='linux' ;;
+Darwin) OS_RE='macos|darwin|apple' ;;
 *) OS_RE="$OS" ;;
 esac
 
 case "$ARCH" in
-x86_64 | amd64 | x64) ARCH_RE='x86_64|amd64|x64' ;;
-aarch64 | arm64) ARCH_RE='aarch64|arm64' ;;
-armv7l | armv7 | armhf) ARCH_RE='armv7l|armv7|armhf' ;;
+x86_64) ARCH_RE='x86_64|amd64|x64' ;;
+arm64 | aarch64) ARCH_RE='aarch64|arm64' ;;
+armv7l) ARCH_RE='armv7l|armv7|armhf' ;;
 *) ARCH_RE="$ARCH" ;;
 esac
 
