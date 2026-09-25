@@ -253,10 +253,11 @@ if [[ "$OS" == "Linux" ]] && grep -qi microsoft /proc/version && ! command_exist
 fi
 
 log "Pulling zellij fork"
-case "$OS" in
-Darwin) bash "$SCRIPT_DIR/pull-zellij-fork.sh" --macos ;;
-Linux) bash "$SCRIPT_DIR/pull-zellij-fork.sh" --x86 ;;
-esac
+# The script detects the platform itself, and there is no fork binary for
+# every architecture - a machine that misses out still gets the rest of the
+# setup rather than having the whole install abort here.
+bash "$SCRIPT_DIR/pull-zellij-fork.sh" ||
+  warn "Continuing without the zellij fork"
 
 log "Setup complete 🚀 Restart your shell."
 log "Next steps:"

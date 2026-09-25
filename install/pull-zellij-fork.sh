@@ -14,16 +14,28 @@ Usage: $(basename "$0") [OPTION]
 
 Download and install the latest zellij binary from Fred Sheppard's fork.
 
+With no option, the platform is detected from uname.
+
 Options:
-  --x86       Install Linux x86_64 binary (default)
+  --x86       Install Linux x86_64 binary
   --macos     Install macOS (Apple Silicon) binary (aarch64-macos)
   -h, --help  Show this help message and exit
 
 EOF
 }
 
-# Defaults
-PLATFORM="x86"
+# The fork only publishes these two binaries, so anything else - a riscv or
+# aarch64 Linux box, say - has nothing to install and should be told so rather
+# than handed an x86 binary it cannot exec.
+detect_platform() {
+  case "$(uname -s)/$(uname -m)" in
+  Darwin/arm64) echo macos ;;
+  Linux/x86_64) echo x86 ;;
+  *) return 1 ;;
+  esac
+}
+
+PLATFORM=""
 
 # Parse args
 if [ $# -gt 1 ]; then
@@ -46,6 +58,11 @@ if [ $# -eq 1 ]; then
     fail "Unknown option: $1. Use --help for usage."
     ;;
   esac
+fi
+
+if [ -z "$PLATFORM" ]; then
+  PLATFORM="$(detect_platform)" ||
+    fail "No zellij fork binary for $(uname -s)/$(uname -m) - the fork only publishes x86_64-linux and aarch64-macos."
 fi
 
 REPO="Fred-Sheppard/zellij"
@@ -72,7 +89,10 @@ TAG=$(curl -s "https://api.github.com/repos/${REPO}/releases/latest" |
 #   $ zellij --version
 #   zellij 0.44.1-rellij
 if command_exists zellij; then
-  CURRENT="$(zellij --version 2>/dev/null | awk '{print $2}')"
+  # An unusable binary (wrong arch, missing libs) must not take the script
+  # down with it - pipefail would otherwise abort here without printing a
+  # thing. Treat it as "no version" and reinstall over the top.
+  CURRENT="$(zellij --version 2>/dev/null | awk '{print $2}')" || CURRENT=""
   if [[ "$CURRENT" == "${TAG#v}" ]]; then
     log "zellij $TAG already installed at $(command -v zellij) - nothing to do"
     exit 0
