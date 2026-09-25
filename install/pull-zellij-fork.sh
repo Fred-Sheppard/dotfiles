@@ -68,17 +68,38 @@ TAG=$(curl -s "https://api.github.com/repos/${REPO}/releases/latest" |
 
 [ -z "$TAG" ] && fail "Failed to fetch latest release tag"
 
+# The fork reports its tag verbatim, minus the leading v:
+#   $ zellij --version
+#   zellij 0.44.1-rellij
+if command_exists zellij; then
+  CURRENT="$(zellij --version 2>/dev/null | awk '{print $2}')"
+  if [[ "$CURRENT" == "${TAG#v}" ]]; then
+    log "zellij $TAG already installed at $(command -v zellij) - nothing to do"
+    exit 0
+  fi
+fi
+
 FILENAME="${BINARY_PREFIX}-${TAG}-${BINARY_SUFFIX}"
 URL="https://github.com/${REPO}/releases/download/${TAG}/${FILENAME}"
 
 BIN_DIR="$HOME/.cargo/bin"
 mkdir -p "$BIN_DIR"
 
-log "Pulling $URL..."
-curl -fsSL -o "$BIN_DIR/$FILENAME" "$URL" || fail "Download failed"
-
 FILE="$BIN_DIR/$FILENAME"
-chmod +x "$FILE"
+
+# Download to a temp file and rename into place. Writing directly to $FILE
+# fails with ETXTBSY (curl error 23) when that exact binary is the one
+# currently running - e.g. re-running this from inside a zellij session on the
+# version we are about to fetch.
+TMP="$(mktemp "$BIN_DIR/.zellij.XXXXXX")"
+trap 'rm -f "$TMP"' EXIT
+
+log "Pulling $URL..."
+curl -fsSL -o "$TMP" "$URL" || fail "Download failed"
+
+chmod +x "$TMP"
+mv -f "$TMP" "$FILE"
+trap - EXIT
 
 TARGET="$BIN_DIR/zellij"
 
