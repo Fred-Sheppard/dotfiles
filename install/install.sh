@@ -2,6 +2,7 @@
 set -Eeuo pipefail
 
 log() { echo -e "\033[1;32m[INFO]\033[0m $*"; }
+warn() { echo -e "\033[1;33m[WARN]\033[0m $*" >&2; }
 fail() {
   echo -e "\033[1;31m[ERROR]\033[0m $*" >&2
   exit 1
@@ -36,9 +37,28 @@ Darwin)
   brew install fzf cargo-binstall
   ;;
 Linux)
-  $SUDO apt-get update
-  $SUDO apt-get upgrade -y
-  $SUDO apt-get install -y ca-certificates curl fzf gcc git make perl unzip zsh
+  # Only apt-based distros are automated. Everywhere else we just check that
+  # the bootstrap packages are present and let the user install them with
+  # whatever package manager they have.
+  if command_exists apt-get; then
+    log "Updating apt packages"
+    $SUDO apt-get update
+    $SUDO apt-get upgrade -y
+    log "Installing bootstrap packages via apt"
+    $SUDO apt-get install -y ca-certificates curl fzf gcc git make perl unzip zsh
+  else
+    warn "No apt-get found - skipping automatic package installation."
+    warn "Update your system and install the equivalents of:"
+    warn "  ca-certificates curl fzf gcc git make perl unzip zsh"
+    missing=()
+    for cmd in curl fzf gcc git make perl unzip zsh; do
+      command_exists "$cmd" || missing+=("$cmd")
+    done
+    if [[ ${#missing[@]} -gt 0 ]]; then
+      fail "Missing required commands: ${missing[*]}. Install them with your package manager, then re-run this script."
+    fi
+    log "All bootstrap commands present - continuing"
+  fi
   ;;
 *)
   fail "Unsupported OS: $OS"
