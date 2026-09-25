@@ -170,14 +170,25 @@ git -C "$HOME/dotfiles" submodule update --init --recursive config/zsh/vendor
 #######################################
 # NVM + Node (LTS)
 #######################################
-if [[ ! -d "$HOME/.nvm" ]]; then
-  curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-fi
-
 export NVM_DIR="$HOME/.nvm"
+# nvm.sh reads unset variables all over the place, so nounset has to come off
+# for the duration - `nvm use` dies on an unbound PROVIDED_VERSION otherwise.
+set +u
+# Only bootstrap when nvm is absent - brew and pacman both ship it, and the
+# upstream installer would clobber their copy.
+if [[ ! -s "$NVM_DIR/nvm.sh" ]]; then
+  NVM_VERSION="$(curl -fsSL https://api.github.com/repos/nvm-sh/nvm/releases/latest |
+    sed -n 's/.*"tag_name": *"\([^"]*\)".*/\1/p' | head -1)"
+  [[ -n "$NVM_VERSION" ]] || fail "Failed to fetch latest nvm release tag"
+  log "Installing nvm $NVM_VERSION"
+  curl -fsSL "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh" | bash
+fi
 source "$NVM_DIR/nvm.sh"
+
+log "Installing Node (LTS) via nvm"
 nvm install --lts
 nvm use --lts
+set -u
 
 #######################################
 # GUI apps (Homebrew Cask)
