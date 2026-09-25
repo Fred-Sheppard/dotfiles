@@ -1,5 +1,6 @@
 show_startup_tips false
 advanced_mouse_actions false
+mouse_hover_effects false
 keybinds clear-defaults=true {
     locked {
         bind "Ctrl g" {
@@ -647,26 +648,22 @@ load_plugins {
 // Default: normal
 //
 default_mode "normal"
- // Choose the path to the default shell that zellij will use for opening new panes
+// Choose the path to the default shell that zellij will use for opening new panes
 // Default: $SHELL
-// 
+//
 // default_shell "fish"
- 
 // Choose the path to override cwd that zellij will use for opening new panes
-// 
+//
 // default_cwd "/tmp"
- 
 // The name of the default layout to load on startup
 // Default: "default"
-// 
-// default_layout "compact"
- 
+//
+default_layout "status"
 // The folder in which Zellij will look for layouts
 // (Requires restart)
-// 
-// layout_dir "/tmp"
- 
-// The folder in which Zellij will look for themes
+//
+layout_dir "/Users/fred/.config/zellij/layouts"
+ // The folder in which Zellij will look for themes
 // (Requires restart)
 // 
 // theme_dir "/tmp"
