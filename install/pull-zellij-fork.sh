@@ -14,41 +14,45 @@ Usage: $(basename "$0") [OPTION]
 
 Download and install the latest zellij binary from Fred Sheppard's fork.
 
-With no option, the platform is detected from uname.
+The binary is picked from whatever the latest release actually publishes,
+matched against this machine's OS and architecture. A new platform added to
+the fork's releases is picked up here with no change to this script.
 
 Options:
-  --x86       Install Linux x86_64 binary
-  --macos     Install macOS (Apple Silicon) binary (aarch64-macos)
+  --os OS     Override the detected OS (linux, macos)
+  --arch A    Override the detected architecture (x86_64, aarch64, ...)
+  --x86       Alias for --os linux --arch x86_64
+  --macos     Alias for --os macos --arch aarch64
   -h, --help  Show this help message and exit
 
 EOF
 }
 
-# The fork only publishes these two binaries, so anything else - a riscv or
-# aarch64 Linux box, say - has nothing to install and should be told so rather
-# than handed an x86 binary it cannot exec.
-detect_platform() {
-  case "$(uname -s)/$(uname -m)" in
-  Darwin/arm64) echo macos ;;
-  Linux/x86_64) echo x86 ;;
-  *) return 1 ;;
-  esac
-}
-
-PLATFORM=""
+OS=""
+ARCH=""
 
 # Parse args
-if [ $# -gt 1 ]; then
-  fail "Too many arguments. Use --help for usage."
-fi
-
-if [ $# -eq 1 ]; then
+while [ $# -gt 0 ]; do
   case "$1" in
+  --os)
+    [ $# -ge 2 ] || fail "--os needs a value. Use --help for usage."
+    OS="$2"
+    shift 2
+    ;;
+  --arch)
+    [ $# -ge 2 ] || fail "--arch needs a value. Use --help for usage."
+    ARCH="$2"
+    shift 2
+    ;;
   --x86)
-    PLATFORM="x86"
+    OS="linux"
+    ARCH="x86_64"
+    shift
     ;;
   --macos)
-    PLATFORM="macos"
+    OS="macos"
+    ARCH="aarch64"
+    shift
     ;;
   -h | --help)
     usage
@@ -58,32 +62,46 @@ if [ $# -eq 1 ]; then
     fail "Unknown option: $1. Use --help for usage."
     ;;
   esac
-fi
+done
 
-if [ -z "$PLATFORM" ]; then
-  PLATFORM="$(detect_platform)" ||
-    fail "No zellij fork binary for $(uname -s)/$(uname -m) - the fork only publishes x86_64-linux and aarch64-macos."
-fi
+[ -n "$OS" ] || OS="$(uname -s)"
+[ -n "$ARCH" ] || ARCH="$(uname -m)"
 
-REPO="Fred-Sheppard/zellij"
-BINARY_PREFIX="zellij"
-
-case "$PLATFORM" in
-x86)
-  BINARY_SUFFIX="x86_64-linux"
-  ;;
-macos)
-  BINARY_SUFFIX="aarch64-macos"
-  ;;
+# Asset names are matched on these tokens rather than on a hardcoded list of
+# platforms, so a release that starts shipping, say, aarch64-linux just works.
+# Each case lists the spellings a build might use for the same thing; anything
+# unrecognised falls through to its own name, which is usually right.
+case "$OS" in
+Linux | linux) OS_RE='linux' ;;
+Darwin | darwin | macos) OS_RE='macos|darwin|apple' ;;
+*) OS_RE="$OS" ;;
 esac
 
-# Get latest release tag
-TAG=$(curl -s "https://api.github.com/repos/${REPO}/releases/latest" |
+case "$ARCH" in
+x86_64 | amd64 | x64) ARCH_RE='x86_64|amd64|x64' ;;
+aarch64 | arm64) ARCH_RE='aarch64|arm64' ;;
+armv7l | armv7 | armhf) ARCH_RE='armv7l|armv7|armhf' ;;
+*) ARCH_RE="$ARCH" ;;
+esac
+
+REPO="Fred-Sheppard/zellij"
+
+RELEASE="$(curl -fsSL "https://api.github.com/repos/${REPO}/releases/latest")" ||
+  fail "Failed to fetch the latest release from $REPO"
+
+TAG=$(printf '%s\n' "$RELEASE" |
   grep '"tag_name"' |
   head -1 |
-  sed 's/.*"tag_name": *"\(.*\)".*/\1/')
+  sed 's/.*"tag_name": *"\([^"]*\)".*/\1/')
 
 [ -z "$TAG" ] && fail "Failed to fetch latest release tag"
+
+# Every asset's download URL, straight from the release - no URL building, so
+# a change in the naming scheme doesn't need mirroring here.
+ASSETS="$(printf '%s\n' "$RELEASE" |
+  sed -n 's/.*"browser_download_url": *"\([^"]*\)".*/\1/p')"
+
+[ -z "$ASSETS" ] && fail "Release $TAG publishes no assets"
 
 # The fork reports its tag verbatim, minus the leading v:
 #   $ zellij --version
@@ -99,8 +117,19 @@ if command_exists zellij; then
   fi
 fi
 
-FILENAME="${BINARY_PREFIX}-${TAG}-${BINARY_SUFFIX}"
-URL="https://github.com/${REPO}/releases/download/${TAG}/${FILENAME}"
+# Both tokens have to appear in the same asset name, each bounded by a
+# separator so a fragment of the version or tag can't stand in for one.
+URL="$(printf '%s\n' "$ASSETS" |
+  grep -Ei "(^|[/_.-])(${ARCH_RE})([_.-]|$)" |
+  grep -Ei "(^|[/_.-])(${OS_RE})([_.-]|$)" |
+  head -1)" || URL=""
+
+if [ -z "$URL" ]; then
+  fail "No $OS/$ARCH binary in $TAG. That release publishes:
+$(printf '%s\n' "$ASSETS" | sed 's|.*/|  |')"
+fi
+
+FILENAME="$(basename "$URL")"
 
 BIN_DIR="$HOME/.cargo/bin"
 mkdir -p "$BIN_DIR"
