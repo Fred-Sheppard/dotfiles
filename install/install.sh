@@ -99,7 +99,29 @@ fi
 
 command_exists cargo-binstall || fail "cargo-binstall not found"
 
-cargo-binstall --no-confirm $(xargs <"$SCRIPT_DIR/tools/cargo.txt")
+#######################################
+# CLI tools
+#######################################
+# Skip anything already on PATH - it may well have come from brew/pacman, and
+# a cargo-binstall copy would shadow or duplicate it.
+binstall=()
+while read -r -u 3 crate cmd || [[ -n "${crate:-}" ]]; do
+  if [[ -z "$crate" || "$crate" == \#* ]]; then
+    continue
+  fi
+  if command_exists "$cmd"; then
+    log "$crate already installed ($(command -v "$cmd"))"
+    continue
+  fi
+  binstall+=("$crate")
+done 3<"$SCRIPT_DIR/tools/cargo.txt"
+
+if [[ ${#binstall[@]} -gt 0 ]]; then
+  log "Installing via cargo-binstall: ${binstall[*]}"
+  cargo-binstall --no-confirm "${binstall[@]}"
+else
+  log "All cargo tools already installed"
+fi
 
 #######################################
 # Neovim (bob)
