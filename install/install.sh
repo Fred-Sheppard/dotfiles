@@ -15,7 +15,9 @@ OS="$(uname)"
 # Root (common in bare containers) needs no sudo, and it's often not
 # even installed there.
 SUDO=""
-[[ "$(id -u)" -ne 0 ]] && SUDO="sudo"
+if [[ "$(id -u)" -ne 0 ]]; then
+  SUDO="sudo"
+fi
 
 #######################################
 # System packages
