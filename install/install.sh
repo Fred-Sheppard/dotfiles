@@ -129,6 +129,10 @@ fi
 # Neovim (bob)
 #######################################
 log "Installing Neovim (stable) via bob"
+# zshrc already puts ~/.local/share/bob/nvim-bin on $PATH, so tell bob not to
+# prompt about doing it itself (the prompt blocks non-interactive installs).
+mkdir -p "$HOME/.config/bob"
+ln -sfn "$HOME/dotfiles/config/bob/config.json" "$HOME/.config/bob/config.json"
 bob use stable
 
 #######################################
