@@ -179,15 +179,29 @@ if command_exists bat; then
   bat cache --build
 fi
 
-log "Pulling zellij fork"
-case "$OS" in
-Darwin) bash "$SCRIPT_DIR/pull-zellij-fork.sh" --macos ;;
-Linux) bash "$SCRIPT_DIR/pull-zellij-fork.sh" --x86 ;;
-esac
-
 #######################################
 # Zsh plugins (vendored as submodules)
 #######################################
+# A container usually sees the repo owned by a different uid than the user
+# running this, and git refuses to touch it until the path is marked safe.
+# Each submodule is its own repo, so they all need listing - a trailing /*
+# would cover them in one go, but only on git 2.38+.
+if ! git -C "$HOME/dotfiles" rev-parse --git-dir >/dev/null 2>&1; then
+  log "Marking $HOME/dotfiles as a safe git directory"
+  safe=("$HOME/dotfiles")
+  while read -r _ path; do
+    safe+=("$HOME/dotfiles/$path")
+  done < <(git config -f "$HOME/dotfiles/.gitmodules" \
+    --get-regexp '^submodule\..*\.path$')
+  for dir in "${safe[@]}"; do
+    git config --global --get-all safe.directory 2>/dev/null |
+      grep -qxF "$dir" ||
+      git config --global --add safe.directory "$dir"
+  done
+  git -C "$HOME/dotfiles" rev-parse --git-dir >/dev/null 2>&1 ||
+    fail "Cannot read the git repo at $HOME/dotfiles"
+fi
+
 log "Fetching vendored zsh plugins"
 git -C "$HOME/dotfiles" submodule update --init --recursive config/zsh/vendor
 
@@ -237,6 +251,12 @@ if [[ "$OS" == "Linux" ]] && grep -qi microsoft /proc/version && ! command_exist
   $SUDO chmod +x /usr/local/bin/win32yank.exe
   rm -rf "$TMP"
 fi
+
+log "Pulling zellij fork"
+case "$OS" in
+Darwin) bash "$SCRIPT_DIR/pull-zellij-fork.sh" --macos ;;
+Linux) bash "$SCRIPT_DIR/pull-zellij-fork.sh" --x86 ;;
+esac
 
 log "Setup complete 🚀 Restart your shell."
 log "Next steps:"
