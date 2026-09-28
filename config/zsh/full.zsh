@@ -14,6 +14,7 @@ Linux)
     alias open="explorer.exe"
     alias copy="clip.exe"
   else
+    alias copy="scopy"
     alias battery="acpi"
   fi
   ;;
@@ -107,6 +108,41 @@ dcdown() {
     return 1
   fi
   docker-compose -f "$1" down
+}
+
+extract() {
+  if [ $# -eq 0 ]; then
+    echo "Usage: extract <archive>..." >&2
+    return 1
+  fi
+  local archive
+  for archive in "$@"; do
+    if [ ! -f "$archive" ]; then
+      echo "extract: '$archive' is not a file" >&2
+      continue
+    fi
+    case "$archive" in
+    *.tar.gz | *.tgz) tar xzvf "$archive" ;;
+    *.tar.bz2 | *.tbz2) tar xjvf "$archive" ;;
+    *.tar.xz | *.txz) tar xJvf "$archive" ;;
+    *.tar.zst) tar --zstd -xvf "$archive" ;;
+    *.tar) tar xvf "$archive" ;;
+    *.gz) gunzip -k "$archive" ;;
+    *.bz2) bunzip2 -k "$archive" ;;
+    *.xz) unxz -k "$archive" ;;
+    *.zst) unzstd "$archive" ;;
+    *.zip | *.jar | *.war | *.whl) unzip "$archive" ;;
+    *.7z) 7z x "$archive" ;;
+    *.rar) unrar x "$archive" ;;
+    *.deb) ar x "$archive" ;;
+    *) echo "extract: unknown archive type '$archive'" >&2 ;;
+    esac
+  done
+}
+
+copypath() {
+  local target="${1:-$PWD}"
+  print -rn -- "${target:A}" | copy
 }
 
 # ============================================
