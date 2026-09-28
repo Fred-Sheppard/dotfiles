@@ -119,12 +119,18 @@ command_exists cargo-binstall || fail "cargo-binstall not found"
 # Skip anything already on PATH - it may well have come from brew/pacman, and
 # a cargo-binstall copy would shadow or duplicate it.
 binstall=()
+bob_wanted=0
 while read -r -u 3 crate cmd || [[ -n "${crate:-}" ]]; do
   if [[ -z "$crate" || "$crate" == \#* ]]; then
     continue
   fi
   if command_exists "$cmd"; then
     log "$crate already installed ($(command -v "$cmd"))"
+    continue
+  fi
+  # bob-nvim needs its own binstall invocation (see below).
+  if [[ "$crate" == "bob-nvim" ]]; then
+    bob_wanted=1
     continue
   fi
   binstall+=("$crate")
@@ -135,6 +141,25 @@ if [[ ${#binstall[@]} -gt 0 ]]; then
   cargo-binstall --no-confirm "${binstall[@]}"
 else
   log "All cargo tools already installed"
+fi
+
+# TODO: Update once https://github.com/MordechaiHadad/bob/pull/414 is merged
+# Deals with bob-nvim's artifact naming issues (arm instead of aarch64)
+if [[ "$bob_wanted" -eq 1 ]]; then
+  bob_args=(--no-confirm)
+  if [[ "$OS" == "Linux" ]]; then
+    case "$(uname -m)" in
+    aarch64 | arm64)
+      bob_args+=(
+        --pkg-url '{ repo }/releases/download/v{ version }/bob-linux-arm{ archive-suffix }'
+        --bin-dir 'bob-linux-arm/{ bin }{ binary-ext }'
+        --pkg-fmt zip
+      )
+      ;;
+    esac
+  fi
+  log "Installing via cargo-binstall: bob-nvim"
+  cargo-binstall "${bob_args[@]}" bob-nvim
 fi
 
 #######################################
