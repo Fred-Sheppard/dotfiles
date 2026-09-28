@@ -2,16 +2,12 @@
 
 ZSH_DIR="${${(%):-%x}:A:h}"
 
-NVM_DIR="$HOME/.nvm"
-NVM_SCRIPT=""
-NVM_COMPLETION=""
+export NVM_DIR="$HOME/.nvm"
 
 case "$(uname)" in
 Darwin)
   alias copy="pbcopy"
   alias battery="pmset -g batt"
-  NVM_SCRIPT="/opt/homebrew/opt/nvm/nvm.sh"
-  NVM_COMPLETION="/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
   ;;
 Linux)
   if grep -qi microsoft /proc/version 2>/dev/null; then
@@ -20,7 +16,6 @@ Linux)
   else
     alias battery="acpi"
   fi
-  NVM_SCRIPT="/usr/share/nvm/init-nvm.sh"
   ;;
 esac
 
@@ -46,12 +41,12 @@ source "$ZSH_DIR/common.zsh"
 # ============================================
 # LAZY-LOADED NVM
 # ============================================
+# Sourcing nvm.sh costs ~100ms, so defer it until something needs node.
 for zb_cmd in nvm node npm npx; do
   eval "
   $zb_cmd() {
     unset -f nvm node npm npx
-    [ -s \"\$NVM_SCRIPT\" ] && \\. \"\$NVM_SCRIPT\"
-    [ -n \"\$NVM_COMPLETION\" ] && [ -s \"\$NVM_COMPLETION\" ] && \\. \"\$NVM_COMPLETION\"
+    [ -s \"\$NVM_DIR/nvm.sh\" ] && \\. \"\$NVM_DIR/nvm.sh\"
     $zb_cmd \"\$@\"
   }
   "
