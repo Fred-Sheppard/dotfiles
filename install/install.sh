@@ -236,8 +236,8 @@ if ! git -C "$HOME/dotfiles" rev-parse --git-dir >/dev/null 2>&1; then
     fail "Cannot read the git repo at $HOME/dotfiles"
 fi
 
-log "Fetching vendored zsh plugins"
-git -C "$HOME/dotfiles" submodule update --init --recursive config/zsh/vendor
+log "Fetching submodules"
+git -C "$HOME/dotfiles" submodule update --init --recursive
 
 #######################################
 # NVM + Node (LTS)
@@ -292,6 +292,19 @@ log "Pulling zellij fork"
 # setup rather than having the whole install abort here.
 bash "$SCRIPT_DIR/pull-zellij-fork.sh" ||
   warn "Continuing without the zellij fork"
+
+#######################################
+# rellij
+#######################################
+RELLIJ_SRC="$HOME/dotfiles/bin/rellij/rellij.sh"
+if [[ -f "$RELLIJ_SRC" ]]; then
+  log "Installing rellij"
+  chmod +x "$RELLIJ_SRC"
+  link bin/rellij/rellij.sh "$HOME/bin/rellij"
+else
+  warn "bin/rellij/rellij.sh is missing - is the submodule checked out?"
+  warn "Fetch it with: git -C $HOME/dotfiles submodule update --init bin/rellij"
+fi
 
 log "Setup complete 🚀 Restart your shell."
 log "Next steps:"
