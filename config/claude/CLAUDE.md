@@ -1,1 +1,4 @@
-Do not add "co-authored by Claude" to git commits
+- Do not add "co-authored by Claude" to git commits
+- Comments:
+  - Keep comments concise and meaningful. Do not leave 3 lines explaining what code does. Leave a single line explaining why that code is needed, and only if the reason is not self-evident.
+  - Do not reference previous behaviour in comments. Comments should stand on their own, not hinting at changes made
