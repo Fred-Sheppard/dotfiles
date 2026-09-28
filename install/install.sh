@@ -54,18 +54,23 @@ Darwin)
   brew install fzf cargo-binstall
   ;;
 Linux)
+  # Packages that ship no same-named binary (e.g. ca-certificates) are listed in APT_NON_COMMANDS so the check skips them.
+  APT_PACKAGES=(ca-certificates curl fzf gcc git make unzip zsh)
+  APT_NON_COMMANDS=(ca-certificates)
+
   if command_exists apt-get; then
     log "Updating apt packages"
     $SUDO apt-get update
     $SUDO apt-get upgrade -y
     log "Installing bootstrap packages via apt"
-    $SUDO apt-get install -y ca-certificates curl fzf gcc git make perl unzip zsh
+    $SUDO apt-get install -y "${APT_PACKAGES[@]}"
   else
     warn "No apt-get found - skipping automatic package installation."
     warn "Update your system and install the equivalents of:"
-    warn "  ca-certificates curl fzf gcc git make perl unzip zsh"
+    warn "  ${APT_PACKAGES[*]}"
     missing=()
-    for cmd in curl fzf gcc git make perl unzip zsh; do
+    for cmd in "${APT_PACKAGES[@]}"; do
+      [[ " ${APT_NON_COMMANDS[*]} " == *" $cmd "* ]] && continue
       command_exists "$cmd" || missing+=("$cmd")
     done
     if [[ ${#missing[@]} -gt 0 ]]; then
