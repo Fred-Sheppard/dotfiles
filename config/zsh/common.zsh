@@ -29,6 +29,38 @@ SAVEHIST=50000
 setopt EXTENDED_HISTORY HIST_IGNORE_DUPS HIST_IGNORE_SPACE SHARE_HISTORY
 
 # ============================================
+# DIRECTORIES
+# ============================================
+setopt AUTO_CD AUTO_PUSHD PUSHD_IGNORE_DUPS PUSHD_SILENT
+
+# Global so they expand mid-argument too, e.g. `cp file .../dest`.
+alias -g ...='../..'
+alias -g ....='../../..'
+alias -g .....='../../../..'
+
+alias -- -='cd -'
+alias 1='cd -1'
+alias 2='cd -2'
+alias 3='cd -3'
+alias 4='cd -4'
+alias 5='cd -5'
+alias d='dirs -v'
+alias md='mkdir -p'
+alias rd='rmdir'
+
+take() {
+  mkdir -p -- "$1" && builtin cd -- "$1"
+}
+
+# ============================================
+# LISTING
+# (plain `ls` here; full.zsh points it at eza, which accepts the same flags)
+# ============================================
+alias l='ls -lah'
+alias ll='ls -lh'
+alias la='ls -lAh'
+
+# ============================================
 # COMPLETION
 # ============================================
 autoload -Uz compinit
