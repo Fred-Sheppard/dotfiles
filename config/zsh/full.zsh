@@ -8,6 +8,7 @@ NVM_COMPLETION=""
 
 case "$(uname)" in
 Darwin)
+  alias copy="pbcopy"
   alias battery="pmset -g batt"
   NVM_SCRIPT="/opt/homebrew/opt/nvm/nvm.sh"
   NVM_COMPLETION="/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
@@ -17,7 +18,6 @@ Linux)
     alias open="explorer.exe"
     alias copy="clip.exe"
   else
-    alias rm="trash-put"
     alias battery="acpi"
   fi
   NVM_SCRIPT="/usr/share/nvm/init-nvm.sh"
