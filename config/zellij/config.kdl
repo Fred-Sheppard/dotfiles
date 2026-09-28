@@ -651,7 +651,7 @@ default_mode "normal"
 // Choose the path to the default shell that zellij will use for opening new panes
 // Default: $SHELL
 //
-// default_shell "fish"
+default_shell "zsh"
 // Choose the path to override cwd that zellij will use for opening new panes
 //
 // default_cwd "/tmp"
@@ -659,10 +659,9 @@ default_mode "normal"
 // Default: "default"
 //
 default_layout "status"
-// The folder in which Zellij will look for layouts
+ // The folder in which Zellij will look for layouts
 // (Requires restart)
 //
-layout_dir "/Users/fred/.config/zellij/layouts"
  // The folder in which Zellij will look for themes
 // (Requires restart)
 // 
