@@ -54,9 +54,6 @@ Darwin)
   brew install fzf cargo-binstall
   ;;
 Linux)
-  # Only apt-based distros are automated. Everywhere else we just check that
-  # the bootstrap packages are present and let the user install them with
-  # whatever package manager they have.
   if command_exists apt-get; then
     log "Updating apt packages"
     $SUDO apt-get update
@@ -214,7 +211,7 @@ if command_exists bat; then
 fi
 
 #######################################
-# Zsh plugins (vendored as submodules)
+# Submodules (zsh plugins, rellij)
 #######################################
 # A container usually sees the repo owned by a different uid than the user
 # running this, and git refuses to touch it until the path is marked safe.
@@ -287,9 +284,6 @@ if [[ "$OS" == "Linux" ]] && grep -qi microsoft /proc/version && ! command_exist
 fi
 
 log "Pulling zellij fork"
-# The script detects the platform itself, and there is no fork binary for
-# every architecture - a machine that misses out still gets the rest of the
-# setup rather than having the whole install abort here.
 bash "$SCRIPT_DIR/pull-zellij-fork.sh" ||
   warn "Continuing without the zellij fork"
 
