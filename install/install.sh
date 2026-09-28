@@ -55,7 +55,8 @@ Darwin)
   ;;
 Linux)
   # Packages that ship no same-named binary (e.g. ca-certificates) are listed in APT_NON_COMMANDS so the check skips them.
-  APT_PACKAGES=(ca-certificates curl fzf gcc git make unzip zsh)
+  # file: Required by yazi
+  APT_PACKAGES=(ca-certificates curl file fzf gcc git make unzip zsh)
   APT_NON_COMMANDS=(ca-certificates)
 
   if command_exists apt-get; then
