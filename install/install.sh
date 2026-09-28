@@ -171,6 +171,40 @@ link config/vscode/settings.json \
   "$HOME/Library/Application Support/Code/User/settings.json"
 
 #######################################
+# Default shell
+#######################################
+# tmux and friends spawn $SHELL, which is the login shell from /etc/passwd and
+# not whatever shell you happened to type. Leave it as bash - the usual
+# devcontainer default - and none of the above is sourced inside them: no
+# starship prompt, no aliases, no keybindings.
+login_shell() {
+  if command_exists getent; then
+    getent passwd "$(id -un)" | cut -d: -f7
+  elif [[ "$OS" == "Darwin" ]]; then
+    dscl . -read "/Users/$(id -un)" UserShell 2>/dev/null | awk '{print $2}'
+  else
+    echo "$SHELL"
+  fi
+}
+
+ZSH_PATH="$(command -v zsh)" || fail "zsh not found"
+if [[ "$(login_shell)" == "$ZSH_PATH" ]]; then
+  log "Login shell is already $ZSH_PATH"
+else
+  log "Setting $ZSH_PATH as the login shell"
+  # chsh refuses a shell that isn't listed in /etc/shells.
+  grep -qxF "$ZSH_PATH" /etc/shells 2>/dev/null ||
+    echo "$ZSH_PATH" | $SUDO tee -a /etc/shells >/dev/null ||
+    warn "Could not add $ZSH_PATH to /etc/shells"
+  if $SUDO chsh -s "$ZSH_PATH" "$(id -un)"; then
+    log "Login shell set - it takes effect in new sessions"
+  else
+    warn "Could not set the login shell. tmux will keep starting $(login_shell)."
+    warn "Set it by hand with: chsh -s $ZSH_PATH"
+  fi
+fi
+
+#######################################
 # Bat theme
 #######################################
 # The theme and `--theme=` line ship in config/bat; bat only needs to be told
