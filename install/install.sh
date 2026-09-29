@@ -195,8 +195,12 @@ link config/zellij/layouts/status.kdl "$HOME/.config/zellij/layouts/default.kdl"
 mkdir -p "$HOME/.local/share/zellij"
 link config/.ideavimrc "$HOME/.ideavimrc"
 link config/vscode/.vscodevimrc "$HOME/.vscodevimrc"
-link config/vscode/settings.json \
-  "$HOME/Library/Application Support/Code/User/settings.json"
+if [[ "$OS" == "Darwin" ]]; then
+  VSCODE_USER_DIR="$HOME/Library/Application Support/Code/User"
+else
+  VSCODE_USER_DIR="$HOME/.config/Code/User"
+fi
+link config/vscode/settings.json "$VSCODE_USER_DIR/settings.json"
 
 #######################################
 # Default shell
