@@ -59,6 +59,14 @@ Linux)
   APT_PACKAGES=(ca-certificates curl file fzf gcc git make unzip zsh)
   APT_NON_COMMANDS=(ca-certificates)
 
+  # LLVM ships no linux-aarch64 clangd release, so mason can't install it
+  # there - see config/nvim/lua/plugins/lspconfig.lua.
+  case "$(uname -m)" in
+  aarch64 | arm64)
+    APT_PACKAGES+=(clangd)
+    ;;
+  esac
+
   if command_exists apt-get; then
     log "Updating apt packages"
     $SUDO apt-get update
