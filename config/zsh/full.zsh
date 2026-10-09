@@ -266,6 +266,9 @@ if [[ "$TERM_PROGRAM" != "vscode" ]]; then
   eval "$(starship init zsh)"
 fi
 
+# Deferred so zsh-vi-mode's lazy init doesn't clobber tv's ^R binding
+zvm_after_init_commands+=('eval "$(tv init zsh)"')
+
 # ============================================
 # DEVICE OVERRIDES
 # Devices can redefine rellij() to avoid calling it
