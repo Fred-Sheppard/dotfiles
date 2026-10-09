@@ -13,6 +13,7 @@ gitui            gitui
 ripgrep          rg
 starship         starship
 tealdeer         tldr
+television       tv
 trashy           trash
 tree-sitter-cli  tree-sitter
 yazi-fm          yazi
