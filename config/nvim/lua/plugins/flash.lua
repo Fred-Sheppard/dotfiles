@@ -13,6 +13,9 @@ return {
   {
     "folke/flash.nvim",
     dependencies = { "unblevable/quick-scope" },
+    keys = {
+      { "s", mode = { "n", "x", "o" }, false },
+    },
     opts = {
       modes = {
         char = {
