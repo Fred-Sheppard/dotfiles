@@ -76,6 +76,7 @@ fi
 # load first, and our own bindkeys must be applied *after* it via its
 # init hook or they get silently clobbered)
 # ============================================
+ZVM_VI_SURROUND_BINDKEY=s-prefix
 source "$ZSH_DIR/vendor/zsh-vi-mode/zsh-vi-mode.zsh"
 source "$ZSH_DIR/vendor/zsh-history-substring-search/zsh-history-substring-search.zsh"
 
