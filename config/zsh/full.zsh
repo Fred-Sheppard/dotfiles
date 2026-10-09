@@ -64,8 +64,8 @@ export HOMEBREW_NO_ENV_HINTS="true"
 # ============================================
 # ALIASES
 # ============================================
-alias -g -- -h='-h 2>&1 | bat --language=help --style=plain --paging=never'
-alias -g -- --help='--help 2>&1 | bat --language=help --style=plain --paging=never'
+alias -g -- -h='-h 2>&1 | bat --language=help --style=plain --paging=auto'
+alias -g -- --help='--help 2>&1 | bat --language=help --style=plain --paging=auto'
 alias zrc='nvim ~/.zshrc'
 alias cat="bat"
 alias ls="eza"
