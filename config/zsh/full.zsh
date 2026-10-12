@@ -2,8 +2,6 @@
 
 ZSH_DIR="${${(%):-%x}:A:h}"
 
-export NVM_DIR="$HOME/.nvm"
-
 case "$(uname)" in
 Darwin)
   alias copy="pbcopy"
@@ -20,23 +18,27 @@ Linux)
   ;;
 esac
 
-# Docker Desktop CLI completions + nvm's default-node bin dir must be on
-# fpath/path *before* compinit runs (inside common.zsh), so this file
-# sources common.zsh itself rather than being sourced by it.
 fpath=("$HOME/.docker/completions" $fpath)
+
+export NVM_DIR="$HOME/.nvm"
 if [ -d "$NVM_DIR/versions/node" ]; then
-  NODE_VERSION_DIR="$NVM_DIR/versions/node"
-  if [ -f "$NVM_DIR/alias/default" ]; then
-    DEFAULT_NODE=$(cat "$NVM_DIR/alias/default")
-  else
-    DEFAULT_NODE=$(command ls -1 "$NODE_VERSION_DIR" | sort -V | tail -n 1)
-  fi
-  path=("$NODE_VERSION_DIR/$DEFAULT_NODE/bin" $path)
+  # Resolve nvm alias chains (default -> lts/* -> lts/jod -> v22.x)
+  DEFAULT_NODE=default
+  for _ in 1 2 3 4 5; do
+    [ -f "$NVM_DIR/alias/$DEFAULT_NODE" ] || break
+    DEFAULT_NODE=$(<"$NVM_DIR/alias/$DEFAULT_NODE")
+  done
+  # Aliases may be partial versions ("20") or names like "node"; fall back to the newest install
+  node_dirs=("$NVM_DIR"/versions/node/v${DEFAULT_NODE#v}(|.*)(Nn/))
+  (( $#node_dirs )) || node_dirs=("$NVM_DIR"/versions/node/v*(Nn/))
+  (( $#node_dirs )) && path=("$node_dirs[-1]/bin" $path)
+  unset DEFAULT_NODE node_dirs
 fi
 
 path=(~/bin ~/.cargo/bin ~/.local/share/bob/nvim-bin $path)
 fpath=(~/.completions $fpath)
 
+# Call after all path updates are completed, due to compinit call
 source "$ZSH_DIR/common.zsh"
 
 # ============================================
@@ -267,6 +269,7 @@ if [[ "$TERM_PROGRAM" != "vscode" ]]; then
 fi
 
 # Deferred so zsh-vi-mode's lazy init doesn't clobber tv's ^R binding
+# TODO: Investigate `ZVM_INIT_MODE=sourcing`
 zvm_after_init_commands+=('eval "$(tv init zsh)"')
 
 # ============================================
