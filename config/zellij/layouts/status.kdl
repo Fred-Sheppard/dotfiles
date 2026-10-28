@@ -4,7 +4,8 @@ layout {
     }
 
     pane size=1 borderless=true {
-        plugin location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
+        // Pinned: v0.25.0+ requires zellij >= 0.45, the rellij fork is 0.44.x
+        plugin location="https://github.com/dj95/zjstatus/releases/download/v0.24.0/zjstatus.wasm" {
             format_left "{mode} #[fg=black,bold] {tabs}"
             format_right "{command_git_branch} {command_battery} {datetime}"
             format_space " "
