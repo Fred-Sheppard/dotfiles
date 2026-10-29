@@ -2,7 +2,7 @@ layout {
     pane split_direction="vertical" {
         pane
     }
-    pane size=1 borderless=true {
+    pane size=2 borderless=true {
         plugin location="file:~/.config/zellij/plugins/zjstatus.wasm" {
             // Config
             hide_frame_for_single_pane "true"
@@ -12,7 +12,7 @@ layout {
             format_right "{command_git_branch} {command_battery} {datetime}"
             format_space " "
             // Border style
-            border_enabled "false"
+            border_enabled "true"
             border_char "─"
             border_format "#[fg=#6C7086]{char}"
             border_position "top"
