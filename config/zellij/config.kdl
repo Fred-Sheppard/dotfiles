@@ -3,6 +3,8 @@ show_startup_tips false
 advanced_mouse_actions false
 mouse_hover_effects false
 default_shell "zsh"
+// Required for zjstatus
+pane_frames false
 keybinds {
     // Update `move` and `session` to Ctrl+8 and Ctrl+9
     unbind "Ctrl h" "Ctrl o"
@@ -27,3 +29,4 @@ keybinds {
         }
     }
 }
+
