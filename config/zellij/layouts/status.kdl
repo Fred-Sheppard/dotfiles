@@ -3,8 +3,7 @@ layout {
         pane
     }
     pane size=1 borderless=true {
-        // Pinned: v0.25.0+ requires zellij >= 0.45, the rellij fork is 0.44.x
-        plugin location="https://github.com/dj95/zjstatus/releases/download/v0.24.0/zjstatus.wasm" {
+        plugin location="file:~/.config/zellij/plugins/zjstatus.wasm" {
             // Config
             hide_frame_for_single_pane "true"
             pane_frame_style "none"
@@ -37,3 +36,4 @@ layout {
         }
     }
 }
+
