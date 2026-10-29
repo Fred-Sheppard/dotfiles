@@ -114,6 +114,31 @@ unset zb_editor
 export VISUAL=$EDITOR
 
 # ============================================
+# SHELL INTEGRATION (OSC 133 semantic prompt marks)
+# ============================================
+zb_osc133_precmd() {
+  local ret=$?
+  if (( zb_osc133_ran )); then
+    printf '\e]133;D;%d\e\\' $ret
+    zb_osc133_ran=0
+  fi
+  # Prompts are set after this file is sourced (starship, minimal.zsh), so wrap lazily
+  if [[ $PROMPT != *$'\e]133;A'* ]]; then
+    PROMPT=$'%{\e]133;A\e\\%}'"$PROMPT"$'%{\e]133;B\e\\%}'
+  fi
+  # Leave $? intact for prompt hooks that run after this one
+  return $ret
+}
+
+zb_osc133_preexec() {
+  printf '\e]133;C\e\\'
+  zb_osc133_ran=1
+}
+
+precmd_functions=(zb_osc133_precmd $precmd_functions)
+preexec_functions+=(zb_osc133_preexec)
+
+# ============================================
 # CLIPBOARD (OSC52, works over ssh/containers with no clipboard bridge)
 # ============================================
 scopy() {
