@@ -330,6 +330,10 @@ log "Pulling zellij fork"
 bash "$SCRIPT_DIR/pull-zellij-fork.sh" ||
   warn "Continuing without the zellij fork"
 
+log "Pulling zjstatus fork"
+bash "$SCRIPT_DIR/pull-zjstatus-fork.sh" ||
+  warn "Continuing without zjstatus - the status layout will fail to load"
+
 #######################################
 # rellij
 #######################################
