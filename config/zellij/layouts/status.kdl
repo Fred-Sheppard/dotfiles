@@ -2,21 +2,22 @@ layout {
     pane split_direction="vertical" {
         pane
     }
-
     pane size=1 borderless=true {
         // Pinned: v0.25.0+ requires zellij >= 0.45, the rellij fork is 0.44.x
         plugin location="https://github.com/dj95/zjstatus/releases/download/v0.24.0/zjstatus.wasm" {
+            // Config
+            hide_frame_for_single_pane "true"
+            pane_frame_style "none"
+            // Items
             format_left "{mode} #[fg=black,bold] {tabs}"
             format_right "{command_git_branch} {command_battery} {datetime}"
             format_space " "
-
+            // Border style
             border_enabled "false"
             border_char "─"
             border_format "#[fg=#6C7086]{char}"
             border_position "top"
-
-            hide_frame_for_single_pane "true"
-
+            // Mode colours
             mode_normal "#[bg=blue,fg=black] {name} "
             mode_locked "#[bg=red,fg=black] {name} "
             mode_resize "#[bg=#ffc387,fg=black] {name} "
@@ -33,10 +34,6 @@ layout {
             mode_tmux "#[bg=#ffc387] {name} "
             tab_normal "#[fg=#6C7086] {name} "
             tab_active "#[fg=#9399B2,bold,italic] {name} "
-
-//            datetime "#[fg=grey,bold] {format} "
-//            datetime_format "%A, %d %b %Y %H:%M"
-//            datetime_timezone "Europe/Dublin"
         }
     }
 }
