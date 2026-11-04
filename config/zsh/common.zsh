@@ -96,6 +96,9 @@ zb_bindkeys() {
 }
 zvm_after_init_commands+=(zb_bindkeys)
 
+# Make completions case insensitive
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+
 # ============================================
 # SUGGESTIONS + HIGHLIGHTING
 # (must load last: syntax-highlighting wraps whatever ZLE widgets
