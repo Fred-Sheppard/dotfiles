@@ -5,6 +5,8 @@ mouse_hover_effects false
 default_shell "zsh"
 // Required for zjstatus
 pane_frames false
+// Do not enter scroll mode automatically
+scroll_mode_sync false
 keybinds {
     // Update `move` and `session` to Ctrl+8 and Ctrl+9
     unbind "Ctrl h" "Ctrl o"
