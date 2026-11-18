@@ -5,3 +5,4 @@
 - [ ] Update zellij config link to track config taken at release, not latest
 - [ ] Include zellij default layout in dotfiles for easy access
   - Technically can be accessed with `zellij --config-dir ~/empty`
+- Starship: Do not show remote branch (e.g. feat/logging/push:feat/logging)
